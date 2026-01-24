@@ -15,6 +15,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 var env = builder.Environment;
 var configuration = builder.Configuration;
+var allowedOrigins = "_frontend";
+
+// CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: allowedOrigins,
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:5175", "http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
+});
 
 Console.WriteLine($"Launching for ENVIRONMENT: {env.EnvironmentName}");
 
@@ -127,6 +144,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(allowedOrigins);
 
 app.UseHttpsRedirection();
 
