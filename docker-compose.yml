@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+    db:
+        image: postgres:16
+        container_name: anibento-db
+        environment:
+            POSTGRES_USER: anibento_user
+            POSTGRES_PASSWORD: anibento_pw
+            POSTGRES_DB: anibento
+        ports:
+            - "5432:5432"
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+
+    api:
+        build:
+            context: .
+            dockerfile: AniBento.Api/Dockerfile
+        container_name: anibento-api
+        depends_on:
+            - db
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ConnectionStrings__DefaultConnection=Host=db;Database=anibento;Username=anibento_user;Password=anibento_pw
+        ports:
+            - "5163:8080"
+
+volumes:
+    pg_data:
