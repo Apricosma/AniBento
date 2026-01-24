@@ -20,9 +20,12 @@ services:
         container_name: anibento-api
         depends_on:
             - db
+        env_file:
+            - .env
         environment:
-            - ASPNETCORE_ENVIRONMENT=Development
-            - ConnectionStrings__DefaultConnection=Host=db;Database=anibento;Username=anibento_user;Password=anibento_pw
+            ASPNETCORE_ENVIRONMENT: Development
+            ConnectionStrings__DefaultConnection: Host=db;Database=anibento;Username=anibento_user;Password=anibento_pw
+            Jwt__Key: ${JWT__KEY}
         ports:
             - "5163:8080"
 
