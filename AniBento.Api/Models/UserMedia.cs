@@ -1,5 +1,15 @@
 ﻿using AniBento.Api.Models.Auth;
 
+public enum UserMediaStatus
+{
+    Planned,
+    Watching,
+    Reading,
+    Completed,
+    OnHold,
+    Dropped,
+}
+
 namespace AniBento.Api.Models
 {
     public class UserMedia
@@ -10,7 +20,7 @@ namespace AniBento.Api.Models
         public int MediaId { get; set; }
         public Media Media { get; set; } = default;
 
-        public string Status { get; set; } = default; // e.g., "Watching", "Completed", "On-Hold", "Dropped", "Plan to Watch"
+        public UserMediaStatus Status { get; set; } = UserMediaStatus.Planned;
         public int? Rating { get; set; }
         public DateTime AddedAt { get; internal set; }
     }

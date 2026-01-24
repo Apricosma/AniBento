@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using AniBento.Api.Data;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Services;
@@ -17,7 +18,13 @@ var configuration = builder.Configuration;
 
 Console.WriteLine($"Launching for ENVIRONMENT: {env.EnvironmentName}");
 
-builder.Services.AddControllers();
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Serialize enums as strings in JSON
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

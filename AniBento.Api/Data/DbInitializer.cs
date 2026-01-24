@@ -113,7 +113,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = naruto.Id,
-                        Status = "Completed",
+                        Status = UserMediaStatus.Watching,
                         Rating = 5,
                         AddedAt = DateTime.UtcNow,
                     },
@@ -121,7 +121,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = onePiece.Id,
-                        Status = "Watching",
+                        Status = UserMediaStatus.OnHold,
                         Rating = 4,
                         AddedAt = DateTime.UtcNow,
                     },
@@ -129,7 +129,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = testUser.Id,
                         MediaId = onePiece.Id,
-                        Status = "Watching",
+                        Status = UserMediaStatus.Completed,
                         Rating = 4,
                         AddedAt = DateTime.UtcNow,
                     }

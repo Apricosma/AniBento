@@ -35,8 +35,8 @@ namespace AniBento.Api.Services
             var entity = await context.UserMedias.FindAsync(user.Id, request.MediaId);
             if (entity != null)
             {
-                if (request.Status is not null)
-                    entity.Status = request.Status;
+                entity.Status = request.Status;
+
                 if (request.Rating is not null)
                     entity.Rating = request.Rating;
 

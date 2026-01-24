@@ -37,6 +37,8 @@ namespace AniBento.Api.Data
                     .WithMany(m => m.UserMedias)
                     .HasForeignKey(um => um.MediaId);
 
+                entity.Property(um => um.Status).HasConversion<string>();
+
                 entity.HasIndex(um => um.UserId);
             });
         }
