@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniBento.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260124011726_UserMediaAddTimeAddedColumn")]
-    partial class UserMediaAddTimeAddedColumn
+    [Migration("20260124220552_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

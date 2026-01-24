@@ -1,13 +1,17 @@
 ﻿using AniBento.Api.Models.Auth;
+using AniBento.Api.Models.Enums;
 
-public enum UserMediaStatus
+namespace AniBento.Api.Models.Enums
 {
-    Planned,
-    Watching,
-    Reading,
-    Completed,
-    OnHold,
-    Dropped,
+    public enum UserMediaStatus
+    {
+        Planned,
+        Watching,
+        Reading,
+        Completed,
+        OnHold,
+        Dropped,
+    }
 }
 
 namespace AniBento.Api.Models

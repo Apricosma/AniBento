@@ -1,6 +1,7 @@
 ﻿using AniBento.Api.Data;
 using AniBento.Api.Models;
 using AniBento.Api.Models.Auth;
+using AniBento.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace AniBento.Api.Data
@@ -27,7 +28,7 @@ namespace AniBento.Api.Data
                 {
                     Title = "Naruto",
                     Description = "A story about a young ninja.",
-                    MediaType = "Anime",
+                    MediaType = MediaType.Manga,
                     ReleaseDate = new DateTime(2002, 10, 3),
                     Studio = "Studio Pierrot",
                     MediaImageUrl = "https://example.com/naruto.jpg",
@@ -38,7 +39,7 @@ namespace AniBento.Api.Data
                 {
                     Title = "One Piece",
                     Description = "A story about pirates searching for treasure.",
-                    MediaType = "Anime",
+                    MediaType = MediaType.Anime,
                     ReleaseDate = new DateTime(1999, 10, 20),
                     Studio = "Toei Animation",
                     MediaImageUrl = "https://example.com/onepiece.jpg",
@@ -49,7 +50,7 @@ namespace AniBento.Api.Data
                 {
                     Title = "Attack on Titan",
                     Description = "Humans fight against giant humanoid Titans.",
-                    MediaType = "Anime",
+                    MediaType = MediaType.Anime,
                     ReleaseDate = new DateTime(2013, 4, 7),
                     Studio = "Wit Studio",
                     MediaImageUrl = "https://example.com/aot.jpg",
@@ -113,7 +114,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = naruto.Id,
-                        Status = UserMediaStatus.Watching,
+                        Status = Models.Enums.UserMediaStatus.Watching,
                         Rating = 5,
                         AddedAt = DateTime.UtcNow,
                     },
@@ -121,7 +122,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = onePiece.Id,
-                        Status = UserMediaStatus.OnHold,
+                        Status = Models.Enums.UserMediaStatus.OnHold,
                         Rating = 4,
                         AddedAt = DateTime.UtcNow,
                     },
@@ -129,7 +130,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = testUser.Id,
                         MediaId = onePiece.Id,
-                        Status = UserMediaStatus.Completed,
+                        Status = Models.Enums.UserMediaStatus.Completed,
                         Rating = 4,
                         AddedAt = DateTime.UtcNow,
                     }

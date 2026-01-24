@@ -25,6 +25,7 @@ namespace AniBento.Api.Data
 
             modelBuilder.Entity<Media>().Property(m => m.ReleaseDate).HasConversion(utcConverter);
             modelBuilder.Entity<Media>().Property(m => m.enteredAt).HasConversion(utcConverter);
+            modelBuilder.Entity<Media>().Property(m => m.MediaType).HasConversion<string>();
 
             modelBuilder.Entity<UserMedia>(entity =>
             {

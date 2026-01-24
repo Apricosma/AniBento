@@ -1,4 +1,6 @@
-﻿namespace AniBento.Api.Dtos.UserMedia
+﻿using AniBento.Api.Models.Enums;
+
+namespace AniBento.Api.Dtos.UserMedia
 {
     public class AddUserMediaRequest
     {
