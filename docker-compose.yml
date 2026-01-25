@@ -26,6 +26,7 @@ services:
             ASPNETCORE_ENVIRONMENT: Development
             ConnectionStrings__DefaultConnection: Host=db;Database=anibento;Username=anibento_user;Password=anibento_pw
             Jwt__Key: ${JWT__KEY}
+            ASPNETCORE_URLS: http://0.0.0.0:8080 # Bind to local network interfaces for development
         ports:
             - "5163:8080"
 
