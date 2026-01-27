@@ -119,6 +119,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IUserMediaService, UserMediaService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpContextAccessor();
 

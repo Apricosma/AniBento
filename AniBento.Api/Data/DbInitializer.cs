@@ -71,6 +71,8 @@ namespace AniBento.Api.Data
                     Email = "adminsam@email.com",
                     NormalizedEmail = "ADMINSAM@EMAIL.COM",
                     EmailConfirmed = true,
+                    ProfilePictureUrl =
+                        "https://avatarfiles.alphacoders.com/375/thumb-1920-375160.jpeg",
                 };
 
                 var user = new ApplicationUser
