@@ -16,8 +16,10 @@ namespace AniBento.Api.Services
             if (string.IsNullOrWhiteSpace(request.Username))
                 return null;
 
+            string normalizedUsername = request.Username.ToUpperInvariant();
+
             return await context
-                .Users.Where(u => u.UserName == request.Username)
+                .Users.Where(u => u.NormalizedUserName == normalizedUsername)
                 .Select(u => new PublicUserInfoResponse
                 {
                     Username = u.UserName,
