@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using AniBento.Api.Dtos.Auth;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Services;
@@ -66,6 +67,32 @@ namespace AniBento.Api.Controllers
         public IActionResult CheckAdmin()
         {
             return Ok("You are an admin.");
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user is null)
+            {
+                return Unauthorized();
+            }
+
+            var response = new PrivateUserInfoResponse
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                ProfilePictureUrl = user.ProfilePictureUrl,
+            };
+
+            return Ok(response);
         }
     }
 }
