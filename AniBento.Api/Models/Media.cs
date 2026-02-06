@@ -2,18 +2,18 @@
 
 namespace AniBento.Api.Models.Enums
 {
-    //public enum MediaType
-    //{
-    //    Anime,
-    //    Manga,
-    //    LightNovel,
-    //    Movie,
-    //    OVA,
-    //    ONA,
-    //    TVShow,
-    //    WebSeries,
-    //    Other,
-    //}
+    public enum MediaType
+    {
+        Anime,
+        Manga,
+        LightNovel,
+        Movie,
+        OVA,
+        ONA,
+        TVShow,
+        WebSeries,
+        Other,
+    }
 }
 
 namespace AniBento.Api.Models
@@ -21,6 +21,7 @@ namespace AniBento.Api.Models
     public class Media
     {
         public int Id { get; set; }
+        public MediaType MediaType { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
         public DateTime ReleaseDate { get; set; }

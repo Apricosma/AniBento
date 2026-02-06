@@ -5,11 +5,16 @@ namespace AniBento.Api.Dtos.Media
     public class GetMediaResponse
     {
         public int Id { get; set; }
+        public MediaType MediaType { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? MediaImageUrl { get; set; }
         public DateTime EnteredAt { get; set; }
+
+        public AnimeDetailsDto? Anime { get; set; }
+        public MangaDetailsDto? Manga { get; set; }
+        public MovieDetailsDto? Movie { get; set; }
     }
 
     public class AnimeDetailsDto

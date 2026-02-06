@@ -47,6 +47,7 @@ namespace AniBento.Api.Data
             modelBuilder.Entity<AnimeDetails>().Property(a => a.Genres).HasColumnType("text[]");
             modelBuilder.Entity<MangaDetails>().Property(m => m.Genres).HasColumnType("text[]");
             modelBuilder.Entity<MovieDetails>().Property(m => m.Genres).HasColumnType("text[]");
+            modelBuilder.Entity<MovieDetails>().Property(m => m.Directors).HasColumnType("text[]");
 
             modelBuilder.Entity<UserMedia>(entity =>
             {

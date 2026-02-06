@@ -1,5 +1,4 @@
-﻿using AniBento.Api.Data;
-using AniBento.Api.Models;
+﻿using AniBento.Api.Models;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -10,56 +9,87 @@ namespace AniBento.Api.Data
     {
         public static void Seed(AppDbContext context)
         {
-            // Role seeding
+            // ---- Roles ----
             if (!context.Roles.Any())
             {
                 context.Roles.AddRange(
                     new IdentityRole("User") { NormalizedName = "USER" },
                     new IdentityRole("Admin") { NormalizedName = "ADMIN" }
                 );
+                context.SaveChanges();
             }
 
-            // Skip if data already exists
-            if (context.Medias.Any())
-                return;
+            // ---- Media + Details ----
+            if (!context.Medias.Any())
+            {
+                context.Medias.AddRange(
+                    new Media
+                    {
+                        Title = "Naruto",
+                        Description = "A story about a young ninja.",
+                        MediaType = MediaType.Manga,
+                        ReleaseDate = new DateTime(2002, 10, 3),
+                        MediaImageUrl = "https://example.com/naruto.jpg",
+                        enteredAt = DateTime.UtcNow,
+                        MangaDetails = new MangaDetails
+                        {
+                            Publisher = "Shueisha",
+                            ChapterCount = 700,
+                            VolumeCount = 72,
+                            Genres = new[] { "Action", "Adventure", "Shounen" },
+                        },
+                    },
+                    new Media
+                    {
+                        Title = "One Piece",
+                        Description = "A story about pirates searching for treasure.",
+                        MediaType = MediaType.Anime,
+                        ReleaseDate = new DateTime(1999, 10, 20),
+                        MediaImageUrl = "https://example.com/onepiece.jpg",
+                        enteredAt = DateTime.UtcNow,
+                        AnimeDetails = new AnimeDetails
+                        {
+                            Studio = "Toei Animation",
+                            EpisodeCount = 1000,
+                            Genres = new[] { "Action", "Adventure", "Shounen" },
+                        },
+                    },
+                    new Media
+                    {
+                        Title = "Attack on Titan",
+                        Description = "Humans fight against giant humanoid Titans.",
+                        MediaType = MediaType.Anime,
+                        ReleaseDate = new DateTime(2013, 4, 7),
+                        MediaImageUrl = "https://example.com/aot.jpg",
+                        enteredAt = DateTime.UtcNow,
+                        AnimeDetails = new AnimeDetails
+                        {
+                            Studio = "Wit Studio",
+                            EpisodeCount = 75,
+                            Genres = new[] { "Action", "Drama", "Dark Fantasy" },
+                        },
+                    },
+                    new Media
+                    {
+                        Title = "Spirited Away",
+                        Description = "A girl enters a spirit world and must find her way back.",
+                        MediaType = MediaType.Movie,
+                        ReleaseDate = new DateTime(2001, 7, 20),
+                        MediaImageUrl = "https://example.com/spiritedaway.jpg",
+                        enteredAt = DateTime.UtcNow,
+                        MovieDetails = new MovieDetails
+                        {
+                            Studio = "Studio Ghibli",
+                            Directors = new[] { "Hayao Miyazaki" },
+                            Genres = new[] { "Fantasy", "Adventure" },
+                        },
+                    }
+                );
 
-            context.Medias.AddRange(
-                new Media
-                {
-                    Title = "Naruto",
-                    Description = "A story about a young ninja.",
-                    MediaType = MediaType.Manga,
-                    ReleaseDate = new DateTime(2002, 10, 3),
-                    Studio = "Studio Pierrot",
-                    MediaImageUrl = "https://example.com/naruto.jpg",
-                    EpisodeOrChapterCount = 220,
-                    enteredAt = DateTime.UtcNow,
-                },
-                new Media
-                {
-                    Title = "One Piece",
-                    Description = "A story about pirates searching for treasure.",
-                    MediaType = MediaType.Anime,
-                    ReleaseDate = new DateTime(1999, 10, 20),
-                    Studio = "Toei Animation",
-                    MediaImageUrl = "https://example.com/onepiece.jpg",
-                    EpisodeOrChapterCount = 1000,
-                    enteredAt = DateTime.UtcNow,
-                },
-                new Media
-                {
-                    Title = "Attack on Titan",
-                    Description = "Humans fight against giant humanoid Titans.",
-                    MediaType = MediaType.Anime,
-                    ReleaseDate = new DateTime(2013, 4, 7),
-                    Studio = "Wit Studio",
-                    MediaImageUrl = "https://example.com/aot.jpg",
-                    EpisodeOrChapterCount = 75,
-                    enteredAt = DateTime.UtcNow,
-                }
-            );
+                context.SaveChanges();
+            }
 
-            // User seeding
+            // ---- Users ----
             if (!context.Users.Any())
             {
                 var passwordHasher = new PasswordHasher<ApplicationUser>();
@@ -84,6 +114,7 @@ namespace AniBento.Api.Data
                     EmailConfirmed = true,
                 };
 
+                // Create users first (so they have IDs), then set password hashes
                 context.Users.Add(admin);
                 context.Users.Add(user);
                 context.SaveChanges();
@@ -102,21 +133,25 @@ namespace AniBento.Api.Data
                     new IdentityUserRole<string> { UserId = admin.Id, RoleId = adminRole.Id },
                     new IdentityUserRole<string> { UserId = user.Id, RoleId = userRole.Id }
                 );
+
+                context.SaveChanges();
             }
 
-            // UserMedia library seeding
+            // ---- UserMedia ----
             if (!context.UserMedias.Any())
             {
                 var adminUser = context.Users.Single(u => u.UserName == "AdminSammy");
                 var testUser = context.Users.Single(u => u.UserName == "TestUser");
+
                 var naruto = context.Medias.Single(m => m.Title == "Naruto");
                 var onePiece = context.Medias.Single(m => m.Title == "One Piece");
+
                 context.UserMedias.AddRange(
                     new UserMedia
                     {
                         UserId = adminUser.Id,
                         MediaId = naruto.Id,
-                        Status = Models.Enums.UserMediaStatus.Watching,
+                        Status = Models.Enums.UserMediaStatus.Reading, // Manga
                         Rating = 5,
                         AddedAt = DateTime.UtcNow,
                     },
@@ -137,9 +172,9 @@ namespace AniBento.Api.Data
                         AddedAt = DateTime.UtcNow,
                     }
                 );
-            }
 
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
     }
 }
