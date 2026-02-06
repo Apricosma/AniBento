@@ -23,7 +23,15 @@ namespace AniBento.Api.Data
             // ---- Media + Details ----
             if (!context.Medias.Any())
             {
-                context.Medias.AddRange(DbMediaSeed.Medias);
+                Media[] medias = DbMediaSeed.Medias;
+
+                // lazy update to add normalization because I ain't editing a hundred seeds lmao
+                foreach (var media in medias)
+                {
+                    media.TitleNormalized = media.Title.Trim().ToUpperInvariant();
+                    media.DescriptionNormalized = media.Description.Trim().ToUpperInvariant();
+                }
+                context.Medias.AddRange(medias);
 
                 context.SaveChanges();
             }
