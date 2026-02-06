@@ -29,6 +29,7 @@ namespace AniBento.Api.Data
                 .Property(m => m.EnteredAt)
                 .HasColumnType("timestamptz")
                 .HasDefaultValueSql("now()");
+            modelBuilder.Entity<Media>().Property(m => m.MediaType).HasConversion<string>();
 
             modelBuilder.Entity<AnimeDetails>().HasKey(ad => ad.MediaId);
             modelBuilder.Entity<MangaDetails>().HasKey(md => md.MediaId);
