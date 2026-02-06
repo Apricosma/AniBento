@@ -29,7 +29,7 @@ namespace AniBento.Api.Controllers
             return Ok(media);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteMediaById(int id)
         {
@@ -37,7 +37,7 @@ namespace AniBento.Api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPost("anime")]
         [SwaggerOperation(Summary = "Create an Anime media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateAnime(
@@ -48,7 +48,7 @@ namespace AniBento.Api.Controllers
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPost("manga")]
         [SwaggerOperation(Summary = "Create a Manga media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateManga(
@@ -59,7 +59,7 @@ namespace AniBento.Api.Controllers
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPost("movie")]
         [SwaggerOperation(Summary = "Create a Movie media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateMovie(
@@ -70,7 +70,7 @@ namespace AniBento.Api.Controllers
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPut("anime/{id:int}")]
         [SwaggerOperation(Summary = "Update an existing Anime media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateAnime(
@@ -84,7 +84,7 @@ namespace AniBento.Api.Controllers
             return Ok(updated);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPut("manga/{id:int}")]
         [SwaggerOperation(Summary = "Update an existing Manga media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateManga(
@@ -98,7 +98,7 @@ namespace AniBento.Api.Controllers
             return Ok(updated);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize]
         [HttpPut("movie/{id:int}")]
         [SwaggerOperation(Summary = "Update an existing Movie media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateMovie(
