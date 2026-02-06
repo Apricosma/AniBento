@@ -1,6 +1,8 @@
 ﻿using AniBento.Api.Data;
+using AniBento.Api.Data.Queries;
 using AniBento.Api.Dtos.Common;
 using AniBento.Api.Dtos.Media;
+using AniBento.Api.Infrastructure.Paging;
 using AniBento.Api.Models;
 using AniBento.Api.Models.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -365,63 +367,25 @@ namespace AniBento.Api.Services
             CancellationToken ct
         )
         {
-            int page = query.Page < 1 ? 1 : query.Page;
+            var baseQuery = context.Medias.AsNoTracking().Apply(query);
 
-            int pageSize =
-                query.PageSize < 1 ? DefaultPageSize
-                : query.PageSize > MaxPageSize ? MaxPageSize
-                : query.PageSize;
-
-            IQueryable<Media> q = context.Medias.AsNoTracking();
-
-            if (query.MediaType is not null)
+            var projected = baseQuery.Select(m => new MediaListItem
             {
-                q = q.Where(m => m.MediaType == query.MediaType);
-            }
+                Id = m.Id,
+                Title = m.Title,
+                ReleaseDate = m.ReleaseDate,
+                MediaImageUrl = m.MediaImageUrl,
+                EnteredAt = m.EnteredAt,
+                MediaType = m.MediaType,
+            });
 
-            if (!string.IsNullOrWhiteSpace(query.Search))
-            {
-                string term = query.Search.Trim().ToUpperInvariant();
-                string like = $"%{term}%";
-                q = q.Where(m =>
-                    EF.Functions.Like(m.TitleNormalized, like)
-                    || EF.Functions.Like(m.DescriptionNormalized, like)
-                );
-
-                q = q.OrderByDescending(m => EF.Functions.Like(m.TitleNormalized, $"{term}%"))
-                    .ThenBy(m => m.Title)
-                    .ThenBy(m => m.Id);
-            }
-            else
-            {
-                q = q.OrderByDescending(m => m.EnteredAt).ThenByDescending(m => m.Id);
-            }
-
-            int totalCount = await q.CountAsync(ct);
-
-            var items = await q.Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .Select(m => new MediaListItem
-                {
-                    Id = m.Id,
-                    MediaType = m.MediaType,
-                    Title = m.Title,
-                    ReleaseDate = m.ReleaseDate,
-                    MediaImageUrl = m.MediaImageUrl,
-                    EnteredAt = m.EnteredAt,
-                })
-                .ToListAsync(ct);
-
-            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
-            return new PagedResponse<MediaListItem>
-            {
-                Items = items,
-                Page = page,
-                PageSize = pageSize,
-                TotalCount = totalCount,
-                TotalPages = totalPages,
-            };
+            return await projected.ToPagedAsync(
+                page: query.Page,
+                pageSize: query.PageSize,
+                defaultPageSize: DefaultPageSize,
+                maxPageSize: MaxPageSize,
+                ct: ct
+            );
         }
     }
 }
