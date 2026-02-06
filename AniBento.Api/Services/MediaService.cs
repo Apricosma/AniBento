@@ -19,7 +19,9 @@ namespace AniBento.Api.Services
             {
                 MediaType = MediaType.Anime,
                 Title = req.Title,
+                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
                 Description = req.Description,
+                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
                 EnteredAt = DateTime.UtcNow,
@@ -59,7 +61,9 @@ namespace AniBento.Api.Services
             {
                 MediaType = MediaType.Manga,
                 Title = req.Title,
+                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
                 Description = req.Description,
+                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
                 EnteredAt = DateTime.UtcNow,
@@ -101,7 +105,9 @@ namespace AniBento.Api.Services
             {
                 MediaType = MediaType.Movie,
                 Title = req.Title,
+                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
                 Description = req.Description,
+                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
                 EnteredAt = DateTime.UtcNow,
@@ -147,7 +153,9 @@ namespace AniBento.Api.Services
                 return null;
 
             existingMedia.Title = req.Title;
+            existingMedia.TitleNormalized = req.Title.Trim().ToUpperInvariant();
             existingMedia.Description = req.Description;
+            existingMedia.DescriptionNormalized = req.Description.Trim().ToUpperInvariant();
             existingMedia.ReleaseDate = req.ReleaseDate;
             existingMedia.MediaImageUrl = req.MediaImageUrl;
 
@@ -192,7 +200,9 @@ namespace AniBento.Api.Services
                 return null;
 
             existingMedia.Title = req.Title;
+            existingMedia.TitleNormalized = req.Title.Trim().ToUpperInvariant();
             existingMedia.Description = req.Description;
+            existingMedia.DescriptionNormalized = req.Description.Trim().ToUpperInvariant();
             existingMedia.ReleaseDate = req.ReleaseDate;
             existingMedia.MediaImageUrl = req.MediaImageUrl;
 
@@ -236,7 +246,9 @@ namespace AniBento.Api.Services
                 return null;
 
             existingMedia.Title = req.Title;
+            existingMedia.TitleNormalized = req.Title.Trim().ToUpperInvariant();
             existingMedia.Description = req.Description;
+            existingMedia.DescriptionNormalized = req.Description.Trim().ToUpperInvariant();
             existingMedia.ReleaseDate = req.ReleaseDate;
             existingMedia.MediaImageUrl = req.MediaImageUrl;
 
@@ -369,11 +381,21 @@ namespace AniBento.Api.Services
 
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
-                String s = query.Search.Trim();
-                q = q.Where(m => m.Title.Contains(s));
-            }
+                string term = query.Search.Trim().ToUpperInvariant();
+                string like = $"%{term}%";
+                q = q.Where(m =>
+                    EF.Functions.Like(m.TitleNormalized, like)
+                    || EF.Functions.Like(m.DescriptionNormalized, like)
+                );
 
-            q = q.OrderByDescending(m => m.EnteredAt).ThenBy(m => m.Id);
+                q = q.OrderByDescending(m => EF.Functions.Like(m.TitleNormalized, $"{term}%"))
+                    .ThenBy(m => m.Title)
+                    .ThenBy(m => m.Id);
+            }
+            else
+            {
+                q = q.OrderByDescending(m => m.EnteredAt).ThenByDescending(m => m.Id);
+            }
 
             int totalCount = await q.CountAsync(ct);
 
