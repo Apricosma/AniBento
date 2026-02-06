@@ -25,7 +25,28 @@ namespace AniBento.Api.Data
 
             modelBuilder.Entity<Media>().Property(m => m.ReleaseDate).HasConversion(utcConverter);
             modelBuilder.Entity<Media>().Property(m => m.enteredAt).HasConversion(utcConverter);
-            modelBuilder.Entity<Media>().Property(m => m.MediaType).HasConversion<string>();
+
+            modelBuilder
+                .Entity<Media>()
+                .HasOne(m => m.AnimeDetails)
+                .WithOne(d => d.Media)
+                .HasForeignKey<AnimeDetails>(d => d.MediaId);
+
+            modelBuilder
+                .Entity<Media>()
+                .HasOne(m => m.MangaDetails)
+                .WithOne(d => d.Media)
+                .HasForeignKey<MangaDetails>(d => d.MediaId);
+
+            modelBuilder
+                .Entity<Media>()
+                .HasOne(m => m.MovieDetails)
+                .WithOne(d => d.Media)
+                .HasForeignKey<MovieDetails>(d => d.MediaId);
+
+            modelBuilder.Entity<AnimeDetails>().Property(a => a.Genres).HasColumnType("text[]");
+            modelBuilder.Entity<MangaDetails>().Property(m => m.Genres).HasColumnType("text[]");
+            modelBuilder.Entity<MovieDetails>().Property(m => m.Genres).HasColumnType("text[]");
 
             modelBuilder.Entity<UserMedia>(entity =>
             {
