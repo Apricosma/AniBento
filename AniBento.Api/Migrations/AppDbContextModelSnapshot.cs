@@ -152,8 +152,9 @@ namespace AniBento.Api.Migrations
                     b.Property<string>("MediaImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<int>("MediaType")
-                        .HasColumnType("integer");
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateOnly?>("ReleaseDate")
                         .HasColumnType("date");

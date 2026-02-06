@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AniBento.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260206191933_AddMediaDetailsTablesAndUpdateModels")]
+    [Migration("20260206192738_AddMediaDetailsTablesAndUpdateModels")]
     partial class AddMediaDetailsTablesAndUpdateModels
     {
         /// <inheritdoc />
@@ -155,8 +155,9 @@ namespace AniBento.Api.Migrations
                     b.Property<string>("MediaImageUrl")
                         .HasColumnType("text");
 
-                    b.Property<int>("MediaType")
-                        .HasColumnType("integer");
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateOnly?>("ReleaseDate")
                         .HasColumnType("date");

@@ -45,14 +45,6 @@ namespace AniBento.Api.Migrations
                 oldClrType: typeof(DateTime),
                 oldType: "timestamp with time zone");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "MediaType",
-                table: "Medias",
-                type: "integer",
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "text");
-
             migrationBuilder.CreateTable(
                 name: "AnimeDetails",
                 columns: table => new
@@ -141,14 +133,6 @@ namespace AniBento.Api.Migrations
                 oldClrType: typeof(DateOnly),
                 oldType: "date",
                 oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "MediaType",
-                table: "Medias",
-                type: "text",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "integer");
 
             migrationBuilder.AlterColumn<DateTime>(
                 name: "enteredAt",
