@@ -1,13 +1,18 @@
 ﻿using AniBento.Api.Data;
+using AniBento.Api.Dtos.Common;
 using AniBento.Api.Dtos.Media;
 using AniBento.Api.Models;
 using AniBento.Api.Models.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AniBento.Api.Services
 {
     public class MediaService(AppDbContext context) : IMediaService
     {
+        private const int DefaultPageSize = 25;
+        private const int MaxPageSize = 100;
+
         public async Task<GetMediaResponse> CreateAnimeAsync(CreateAnimeRequest req)
         {
             Media media = new Media
@@ -341,6 +346,60 @@ namespace AniBento.Api.Services
             }
 
             return response;
+        }
+
+        public async Task<PagedResponse<MediaListItem>> GetAllPagedAsync(
+            GetAllMediaQuery query,
+            CancellationToken ct
+        )
+        {
+            int page = query.Page < 1 ? 1 : query.Page;
+
+            int pageSize =
+                query.PageSize < 1 ? DefaultPageSize
+                : query.PageSize > MaxPageSize ? MaxPageSize
+                : query.PageSize;
+
+            IQueryable<Media> q = context.Medias.AsNoTracking();
+
+            if (query.MediaType is not null)
+            {
+                q = q.Where(m => m.MediaType == query.MediaType);
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.Search))
+            {
+                String s = query.Search.Trim();
+                q = q.Where(m => m.Title.Contains(s));
+            }
+
+            q = q.OrderByDescending(m => m.EnteredAt).ThenBy(m => m.Id);
+
+            int totalCount = await q.CountAsync(ct);
+
+            var items = await q.Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(m => new MediaListItem
+                {
+                    Id = m.Id,
+                    MediaType = m.MediaType,
+                    Title = m.Title,
+                    ReleaseDate = m.ReleaseDate,
+                    MediaImageUrl = m.MediaImageUrl,
+                    EnteredAt = m.EnteredAt,
+                })
+                .ToListAsync(ct);
+
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResponse<MediaListItem>
+            {
+                Items = items,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages,
+            };
         }
     }
 }

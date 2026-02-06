@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Dtos.Media;
+﻿using AniBento.Api.Dtos.Common;
+using AniBento.Api.Dtos.Media;
 using AniBento.Api.Models;
 
 namespace AniBento.Api.Services
@@ -7,6 +8,10 @@ namespace AniBento.Api.Services
     {
         Task<List<GetAllMediaListResponse>> GetAllMediaAsync();
         Task<GetMediaResponse?> GetMediaByIdAsync(int id);
+        Task<PagedResponse<MediaListItem>> GetAllPagedAsync(
+            GetAllMediaQuery query,
+            CancellationToken ct
+        );
         Task<GetMediaResponse> CreateAnimeAsync(CreateAnimeRequest req);
         Task<GetMediaResponse> CreateMangaAsync(CreateMangaRequest req);
         Task<GetMediaResponse> CreateMovieAsync(CreateMovieRequest req);
