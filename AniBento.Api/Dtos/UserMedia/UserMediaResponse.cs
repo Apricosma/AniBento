@@ -10,6 +10,6 @@ namespace AniBento.Api.Dtos.UserMedia
         public UserMediaStatus Status { get; set; }
         public int? Rating { get; set; }
 
-        public DateTime AddedAt { get; set; }
+        public DateTimeOffset AddedAt { get; set; }
     }
 }

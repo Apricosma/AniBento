@@ -17,7 +17,7 @@ namespace AniBento.Api.Services
                 Description = req.Description,
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
-                enteredAt = DateTime.UtcNow,
+                EnteredAt = DateTime.UtcNow,
                 AnimeDetails = new AnimeDetails
                 {
                     Studio = req.Studio,
@@ -37,7 +37,7 @@ namespace AniBento.Api.Services
                 Description = media.Description,
                 ReleaseDate = media.ReleaseDate,
                 MediaImageUrl = media.MediaImageUrl,
-                EnteredAt = media.enteredAt,
+                EnteredAt = media.EnteredAt,
 
                 Anime = new AnimeDetailsDto
                 {
@@ -57,7 +57,7 @@ namespace AniBento.Api.Services
                 Description = req.Description,
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
-                enteredAt = DateTime.UtcNow,
+                EnteredAt = DateTime.UtcNow,
                 MangaDetails = new MangaDetails
                 {
                     ChapterCount = req.ChapterCount,
@@ -78,7 +78,7 @@ namespace AniBento.Api.Services
                 Description = media.Description,
                 ReleaseDate = media.ReleaseDate,
                 MediaImageUrl = media.MediaImageUrl,
-                EnteredAt = media.enteredAt,
+                EnteredAt = media.EnteredAt,
 
                 Manga = new MangaDetailsDto
                 {
@@ -99,7 +99,7 @@ namespace AniBento.Api.Services
                 Description = req.Description,
                 ReleaseDate = req.ReleaseDate,
                 MediaImageUrl = req.MediaImageUrl,
-                enteredAt = DateTime.UtcNow,
+                EnteredAt = DateTime.UtcNow,
                 MovieDetails = new MovieDetails
                 {
                     Directors = req.Directors,
@@ -119,7 +119,7 @@ namespace AniBento.Api.Services
                 Description = media.Description,
                 ReleaseDate = media.ReleaseDate,
                 MediaImageUrl = media.MediaImageUrl,
-                EnteredAt = media.enteredAt,
+                EnteredAt = media.EnteredAt,
 
                 Movie = new MovieDetailsDto
                 {
@@ -165,7 +165,7 @@ namespace AniBento.Api.Services
                 Description = existingMedia.Description,
                 ReleaseDate = existingMedia.ReleaseDate,
                 MediaImageUrl = existingMedia.MediaImageUrl,
-                EnteredAt = existingMedia.enteredAt,
+                EnteredAt = existingMedia.EnteredAt,
                 Anime = new AnimeDetailsDto
                 {
                     Studio = existingMedia.AnimeDetails.Studio,
@@ -209,7 +209,7 @@ namespace AniBento.Api.Services
                 Description = existingMedia.Description,
                 ReleaseDate = existingMedia.ReleaseDate,
                 MediaImageUrl = existingMedia.MediaImageUrl,
-                EnteredAt = existingMedia.enteredAt,
+                EnteredAt = existingMedia.EnteredAt,
                 Manga = new MangaDetailsDto
                 {
                     ChapterCount = existingMedia.MangaDetails.ChapterCount,
@@ -251,7 +251,7 @@ namespace AniBento.Api.Services
                 Description = existingMedia.Description,
                 ReleaseDate = existingMedia.ReleaseDate,
                 MediaImageUrl = existingMedia.MediaImageUrl,
-                EnteredAt = existingMedia.enteredAt,
+                EnteredAt = existingMedia.EnteredAt,
                 Movie = new MovieDetailsDto
                 {
                     Genres = existingMedia.MovieDetails.Genres,
@@ -282,7 +282,7 @@ namespace AniBento.Api.Services
                     Description = m.Description,
                     ReleaseDate = m.ReleaseDate,
                     MediaImageUrl = m.MediaImageUrl,
-                    EnteredAt = m.enteredAt,
+                    EnteredAt = m.EnteredAt,
                     MediaType = m.MediaType,
                 })
                 .ToListAsync();
@@ -307,7 +307,7 @@ namespace AniBento.Api.Services
                 Description = media.Description,
                 ReleaseDate = media.ReleaseDate,
                 MediaImageUrl = media.MediaImageUrl,
-                EnteredAt = media.enteredAt,
+                EnteredAt = media.EnteredAt,
             };
 
             // Depending on the media type, populate the appropriate details in the response

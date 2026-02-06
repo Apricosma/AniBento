@@ -18,31 +18,42 @@ namespace AniBento.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            var utcConverter = new ValueConverter<DateTime, DateTime>(
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
-            );
+            //var utcConverter = new ValueConverter<DateTime, DateTime>(
+            //    v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
+            //    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+            //);
 
-            modelBuilder.Entity<Media>().Property(m => m.ReleaseDate).HasConversion(utcConverter);
-            modelBuilder.Entity<Media>().Property(m => m.enteredAt).HasConversion(utcConverter);
+            modelBuilder.Entity<Media>().Property(m => m.ReleaseDate).HasColumnType("date");
+            modelBuilder
+                .Entity<Media>()
+                .Property(m => m.EnteredAt)
+                .HasColumnType("timestamptz")
+                .HasDefaultValueSql("now()");
+
+            modelBuilder.Entity<AnimeDetails>().HasKey(ad => ad.MediaId);
+            modelBuilder.Entity<MangaDetails>().HasKey(md => md.MediaId);
+            modelBuilder.Entity<MovieDetails>().HasKey(md => md.MediaId);
 
             modelBuilder
                 .Entity<Media>()
                 .HasOne(m => m.AnimeDetails)
                 .WithOne(d => d.Media)
-                .HasForeignKey<AnimeDetails>(d => d.MediaId);
+                .HasForeignKey<AnimeDetails>(d => d.MediaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder
                 .Entity<Media>()
                 .HasOne(m => m.MangaDetails)
                 .WithOne(d => d.Media)
-                .HasForeignKey<MangaDetails>(d => d.MediaId);
+                .HasForeignKey<MangaDetails>(d => d.MediaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder
                 .Entity<Media>()
                 .HasOne(m => m.MovieDetails)
                 .WithOne(d => d.Media)
-                .HasForeignKey<MovieDetails>(d => d.MediaId);
+                .HasForeignKey<MovieDetails>(d => d.MediaId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<AnimeDetails>().Property(a => a.Genres).HasColumnType("text[]");
             modelBuilder.Entity<MangaDetails>().Property(m => m.Genres).HasColumnType("text[]");

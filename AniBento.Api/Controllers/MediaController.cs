@@ -13,12 +13,12 @@ namespace AniBento.Api.Controllers
     public class MediaController(IMediaService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<List<GetMediaResponse>>> GetMedia()
+        public async Task<ActionResult<List<GetAllMediaListResponse>>> GetMedia()
         {
             return Ok(await service.GetAllMediaAsync());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<GetMediaResponse>> GetMediaById(int id)
         {
             GetMediaResponse? media = await service.GetMediaByIdAsync(id);
@@ -30,42 +30,86 @@ namespace AniBento.Api.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMediaById(int id)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteMediaById(int id)
         {
-            try
-            {
-                await service.DeleteMediaAsync(id);
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return NotFound();
-            }
+            await service.DeleteMediaAsync(id);
+            return NoContent();
         }
 
         [Authorize(Roles = "User")]
-        [HttpPost]
-        public async Task<ActionResult> CreateMedia(CreateMediaBaseRequest mediaRequest)
+        [HttpPost("anime")]
+        [SwaggerOperation(Summary = "Create an Anime media item.")]
+        public async Task<ActionResult<GetMediaResponse>> CreateAnime(
+            [FromBody] CreateAnimeRequest req
+        )
         {
-            GetMediaResponse created = await service.CreateMediaAsync(mediaRequest);
+            var created = await service.CreateAnimeAsync(req);
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
         [Authorize(Roles = "User")]
-        [SwaggerOperation(Summary = "Update an existing media item by its ID.")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateMedia(int id, UpdateMediaRequest mediaRequest)
+        [HttpPost("manga")]
+        [SwaggerOperation(Summary = "Create a Manga media item.")]
+        public async Task<ActionResult<GetMediaResponse>> CreateManga(
+            [FromBody] CreateMangaRequest req
+        )
         {
-            try
-            {
-                await service.UpdateMediaAsync(id, mediaRequest);
-                return NoContent();
-            }
-            catch (Exception)
-            {
-                return NotFound($"Media with given Id was not found");
-            }
+            var created = await service.CreateMangaAsync(req);
+            return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("movie")]
+        [SwaggerOperation(Summary = "Create a Movie media item.")]
+        public async Task<ActionResult<GetMediaResponse>> CreateMovie(
+            [FromBody] CreateMovieRequest req
+        )
+        {
+            var created = await service.CreateMovieAsync(req);
+            return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPut("anime/{id:int}")]
+        [SwaggerOperation(Summary = "Update an existing Anime media item by ID.")]
+        public async Task<ActionResult<GetMediaResponse>> UpdateAnime(
+            int id,
+            [FromBody] UpdateAnimeRequest req
+        )
+        {
+            var updated = await service.UpdateAnimeAsync(id, req);
+            if (updated is null)
+                return NotFound();
+            return Ok(updated);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPut("manga/{id:int}")]
+        [SwaggerOperation(Summary = "Update an existing Manga media item by ID.")]
+        public async Task<ActionResult<GetMediaResponse>> UpdateManga(
+            int id,
+            [FromBody] UpdateMangaRequest req
+        )
+        {
+            var updated = await service.UpdateMangaAsync(id, req);
+            if (updated is null)
+                return NotFound();
+            return Ok(updated);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPut("movie/{id:int}")]
+        [SwaggerOperation(Summary = "Update an existing Movie media item by ID.")]
+        public async Task<ActionResult<GetMediaResponse>> UpdateMovie(
+            int id,
+            [FromBody] UpdateMovieRequest req
+        )
+        {
+            var updated = await service.UpdateMovieAsync(id, req);
+            if (updated is null)
+                return NotFound();
+            return Ok(updated);
         }
     }
 }

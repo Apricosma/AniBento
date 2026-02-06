@@ -7,7 +7,7 @@ namespace AniBento.Api.Dtos.Media
         public int Id { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        public DateOnly ReleaseDate { get; set; }
         public string? MediaImageUrl { get; set; }
     }
 

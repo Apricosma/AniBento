@@ -28,9 +28,9 @@ namespace AniBento.Api.Data
                         Title = "Naruto",
                         Description = "A story about a young ninja.",
                         MediaType = MediaType.Manga,
-                        ReleaseDate = new DateTime(2002, 10, 3),
+                        ReleaseDate = new DateOnly(2002, 10, 3),
                         MediaImageUrl = "https://example.com/naruto.jpg",
-                        enteredAt = DateTime.UtcNow,
+                        EnteredAt = DateTimeOffset.UtcNow,
                         MangaDetails = new MangaDetails
                         {
                             Publisher = "Shueisha",
@@ -44,9 +44,9 @@ namespace AniBento.Api.Data
                         Title = "One Piece",
                         Description = "A story about pirates searching for treasure.",
                         MediaType = MediaType.Anime,
-                        ReleaseDate = new DateTime(1999, 10, 20),
+                        ReleaseDate = new DateOnly(1999, 10, 20),
                         MediaImageUrl = "https://example.com/onepiece.jpg",
-                        enteredAt = DateTime.UtcNow,
+                        EnteredAt = DateTimeOffset.UtcNow,
                         AnimeDetails = new AnimeDetails
                         {
                             Studio = "Toei Animation",
@@ -59,9 +59,9 @@ namespace AniBento.Api.Data
                         Title = "Attack on Titan",
                         Description = "Humans fight against giant humanoid Titans.",
                         MediaType = MediaType.Anime,
-                        ReleaseDate = new DateTime(2013, 4, 7),
+                        ReleaseDate = new DateOnly(2013, 4, 7),
                         MediaImageUrl = "https://example.com/aot.jpg",
-                        enteredAt = DateTime.UtcNow,
+                        EnteredAt = DateTimeOffset.UtcNow,
                         AnimeDetails = new AnimeDetails
                         {
                             Studio = "Wit Studio",
@@ -74,9 +74,9 @@ namespace AniBento.Api.Data
                         Title = "Spirited Away",
                         Description = "A girl enters a spirit world and must find her way back.",
                         MediaType = MediaType.Movie,
-                        ReleaseDate = new DateTime(2001, 7, 20),
+                        ReleaseDate = new DateOnly(2001, 7, 20),
                         MediaImageUrl = "https://example.com/spiritedaway.jpg",
-                        enteredAt = DateTime.UtcNow,
+                        EnteredAt = DateTimeOffset.UtcNow,
                         MovieDetails = new MovieDetails
                         {
                             Studio = "Studio Ghibli",
@@ -114,7 +114,6 @@ namespace AniBento.Api.Data
                     EmailConfirmed = true,
                 };
 
-                // Create users first (so they have IDs), then set password hashes
                 context.Users.Add(admin);
                 context.Users.Add(user);
                 context.SaveChanges();
@@ -151,9 +150,9 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = naruto.Id,
-                        Status = Models.Enums.UserMediaStatus.Reading, // Manga
+                        Status = Models.Enums.UserMediaStatus.Reading,
                         Rating = 5,
-                        AddedAt = DateTime.UtcNow,
+                        AddedAt = DateTimeOffset.UtcNow, // if AddedAt is DateTimeOffset
                     },
                     new UserMedia
                     {
@@ -161,7 +160,7 @@ namespace AniBento.Api.Data
                         MediaId = onePiece.Id,
                         Status = Models.Enums.UserMediaStatus.OnHold,
                         Rating = 4,
-                        AddedAt = DateTime.UtcNow,
+                        AddedAt = DateTimeOffset.UtcNow,
                     },
                     new UserMedia
                     {
@@ -169,7 +168,7 @@ namespace AniBento.Api.Data
                         MediaId = onePiece.Id,
                         Status = Models.Enums.UserMediaStatus.Completed,
                         Rating = 4,
-                        AddedAt = DateTime.UtcNow,
+                        AddedAt = DateTimeOffset.UtcNow,
                     }
                 );
 
