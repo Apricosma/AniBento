@@ -46,7 +46,7 @@ namespace AniBento.Api.Controllers
 
         [Authorize(Roles = "User")]
         [HttpPost]
-        public async Task<ActionResult> CreateMedia(CreateMediaRequest mediaRequest)
+        public async Task<ActionResult> CreateMedia(CreateMediaBaseRequest mediaRequest)
         {
             GetMediaResponse created = await service.CreateMediaAsync(mediaRequest);
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);

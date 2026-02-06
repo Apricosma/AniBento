@@ -2,23 +2,22 @@
 
 namespace AniBento.Api.Dtos.Media
 {
-    public class UpdateMediaBaseRequest
+    public class CreateMediaBaseRequest
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? MediaImageUrl { get; set; }
     }
 
-    public class UpdateAnimeRequest : UpdateMediaBaseRequest
+    public class CreateAnimeRequest : CreateMediaBaseRequest
     {
         public string? Studio { get; set; }
         public int EpisodeCount { get; set; }
         public string[] Genres { get; set; } = [];
     }
 
-    public class UpdateMangaRequest : UpdateMediaBaseRequest
+    public class CreateMangaRequest : CreateMediaBaseRequest
     {
         public string? Publisher { get; set; }
         public int ChapterCount { get; set; }
@@ -26,7 +25,7 @@ namespace AniBento.Api.Dtos.Media
         public string[] Genres { get; set; } = [];
     }
 
-    public class UpdateMovieRequest : UpdateMediaBaseRequest
+    public class CreateMovieRequest : CreateMediaBaseRequest
     {
         public string? Studio { get; set; }
         public string[] Genres { get; set; } = [];

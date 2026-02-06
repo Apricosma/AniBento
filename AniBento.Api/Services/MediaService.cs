@@ -7,7 +7,7 @@ namespace AniBento.Api.Services
 {
     public class MediaService(AppDbContext context) : IMediaService
     {
-        public async Task<GetMediaResponse> CreateMediaAsync(CreateMediaRequest mediaRequest)
+        public async Task<GetMediaResponse> CreateMediaAsync(CreateMediaBaseRequest mediaRequest)
         {
             Media media = new Media
             {

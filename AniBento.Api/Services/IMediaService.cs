@@ -7,7 +7,7 @@ namespace AniBento.Api.Services
     {
         Task<List<GetMediaResponse>> GetAllMediaAsync();
         Task<GetMediaResponse?> GetMediaByIdAsync(int id);
-        Task<GetMediaResponse> CreateMediaAsync(CreateMediaRequest media);
+        Task<GetMediaResponse> CreateMediaAsync(CreateMediaBaseRequest media);
         Task<bool> UpdateMediaAsync(int id, UpdateMediaRequest media);
         Task DeleteMediaAsync(int id);
     }
