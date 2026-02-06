@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Dtos.Media;
+﻿using AniBento.Api.Dtos.Common;
+using AniBento.Api.Dtos.Media;
 using AniBento.Api.Models;
 using AniBento.Api.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +14,13 @@ namespace AniBento.Api.Controllers
     public class MediaController(IMediaService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<List<GetAllMediaListResponse>>> GetMedia()
+        public async Task<ActionResult<PagedResponse<GetAllMediaListResponse>>> GetMedia(
+            [FromQuery] GetAllMediaQuery query,
+            CancellationToken ct
+        )
         {
-            return Ok(await service.GetAllMediaAsync());
+            PagedResponse<MediaListItem> result = await service.GetAllPagedAsync(query, ct);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
