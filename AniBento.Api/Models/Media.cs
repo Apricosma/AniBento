@@ -21,8 +21,8 @@ namespace AniBento.Api.Models
     public class Media
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public required string Title { get; set; }
+        public required string Description { get; set; }
         public DateTime ReleaseDate { get; set; }
         public string? MediaImageUrl { get; set; }
         public DateTime enteredAt { get; set; }
