@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Models.Enums;
+﻿using System.Text.Json.Serialization;
+using AniBento.Api.Models.Enums;
 
 namespace AniBento.Api.Dtos.Media
 {
@@ -12,8 +13,16 @@ namespace AniBento.Api.Dtos.Media
         public string? MediaImageUrl { get; set; }
         public DateTimeOffset EnteredAt { get; set; }
 
+        // If a field is null, it will be ignored in the JSON response
+        // This is to avoid sending unnecessary data for media types that don't have specific details
+        // Front-end needs to handle the absence of these fields appropriately
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AnimeDetailsDto? Anime { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public MangaDetailsDto? Manga { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public MovieDetailsDto? Movie { get; set; }
     }
 
