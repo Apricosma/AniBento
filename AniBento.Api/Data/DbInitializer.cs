@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Models;
+﻿using AniBento.Api.Data.DbSeedData;
+using AniBento.Api.Models;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
@@ -22,69 +23,7 @@ namespace AniBento.Api.Data
             // ---- Media + Details ----
             if (!context.Medias.Any())
             {
-                context.Medias.AddRange(
-                    new Media
-                    {
-                        Title = "Naruto",
-                        Description = "A story about a young ninja.",
-                        MediaType = MediaType.Manga,
-                        ReleaseDate = new DateOnly(2002, 10, 3),
-                        MediaImageUrl = "https://example.com/naruto.jpg",
-                        EnteredAt = DateTimeOffset.UtcNow,
-                        MangaDetails = new MangaDetails
-                        {
-                            Publisher = "Shueisha",
-                            ChapterCount = 700,
-                            VolumeCount = 72,
-                            Genres = new[] { "Action", "Adventure", "Shounen" },
-                        },
-                    },
-                    new Media
-                    {
-                        Title = "One Piece",
-                        Description = "A story about pirates searching for treasure.",
-                        MediaType = MediaType.Anime,
-                        ReleaseDate = new DateOnly(1999, 10, 20),
-                        MediaImageUrl = "https://example.com/onepiece.jpg",
-                        EnteredAt = DateTimeOffset.UtcNow,
-                        AnimeDetails = new AnimeDetails
-                        {
-                            Studio = "Toei Animation",
-                            EpisodeCount = 1000,
-                            Genres = new[] { "Action", "Adventure", "Shounen" },
-                        },
-                    },
-                    new Media
-                    {
-                        Title = "Attack on Titan",
-                        Description = "Humans fight against giant humanoid Titans.",
-                        MediaType = MediaType.Anime,
-                        ReleaseDate = new DateOnly(2013, 4, 7),
-                        MediaImageUrl = "https://example.com/aot.jpg",
-                        EnteredAt = DateTimeOffset.UtcNow,
-                        AnimeDetails = new AnimeDetails
-                        {
-                            Studio = "Wit Studio",
-                            EpisodeCount = 75,
-                            Genres = new[] { "Action", "Drama", "Dark Fantasy" },
-                        },
-                    },
-                    new Media
-                    {
-                        Title = "Spirited Away",
-                        Description = "A girl enters a spirit world and must find her way back.",
-                        MediaType = MediaType.Movie,
-                        ReleaseDate = new DateOnly(2001, 7, 20),
-                        MediaImageUrl = "https://example.com/spiritedaway.jpg",
-                        EnteredAt = DateTimeOffset.UtcNow,
-                        MovieDetails = new MovieDetails
-                        {
-                            Studio = "Studio Ghibli",
-                            Directors = new[] { "Hayao Miyazaki" },
-                            Genres = new[] { "Fantasy", "Adventure" },
-                        },
-                    }
-                );
+                context.Medias.AddRange(DbMediaSeed.Medias);
 
                 context.SaveChanges();
             }
@@ -152,7 +91,7 @@ namespace AniBento.Api.Data
                         MediaId = naruto.Id,
                         Status = Models.Enums.UserMediaStatus.Reading,
                         Rating = 5,
-                        AddedAt = DateTimeOffset.UtcNow, // if AddedAt is DateTimeOffset
+                        AddedAt = DateTimeOffset.UtcNow,
                     },
                     new UserMedia
                     {
