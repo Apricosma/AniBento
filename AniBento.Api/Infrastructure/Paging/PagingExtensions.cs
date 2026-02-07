@@ -56,17 +56,15 @@ namespace AniBento.Api.Infrastructure.Paging
         {
             var (p, ps, skip) = Normalize(page, pageSize, defaultPageSize, maxPageSize);
 
-            Task<int> totalCountTask = query.CountAsync(ct);
-            Task<List<T>> itemsTask = query.Skip(skip).Take(ps).ToListAsync(ct);
+            int totalCount = await query.CountAsync(ct);
 
-            await Task.WhenAll(totalCountTask, itemsTask);
+            var items = await query.Skip(skip).Take(ps).ToListAsync(ct);
 
-            int totalCount = totalCountTask.Result;
             int totalPages = (int)Math.Ceiling(totalCount / (double)ps);
 
             return new PagedResponse<T>
             {
-                Items = itemsTask.Result,
+                Items = items,
                 Page = p,
                 PageSize = ps,
                 TotalCount = totalCount,
