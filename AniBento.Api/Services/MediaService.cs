@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using AniBento.Api.Data;
 using AniBento.Api.Data.Queries;
 using AniBento.Api.Dtos.Common;
 using AniBento.Api.Dtos.Media;
@@ -10,6 +11,86 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AniBento.Api.Services
 {
+    public static class MediaFactory
+    {
+        private static void ApplyBase(Media m, DateOnly? releaseDate, string? mediaImageUrl)
+        {
+            m.Title = m.Title.Trim();
+            m.Description = m.Description.Trim();
+
+            m.TitleNormalized = m.Title.ToUpperInvariant();
+            m.DescriptionNormalized = m.Description.ToUpperInvariant();
+
+            m.ReleaseDate = releaseDate;
+            m.MediaImageUrl = mediaImageUrl;
+            m.EnteredAt = DateTimeOffset.UtcNow;
+        }
+
+        public static Media CreateAnime(CreateAnimeRequest req)
+        {
+            var media = new Media
+            {
+                MediaType = MediaType.Anime,
+                Title = req.Title,
+                Description = req.Description,
+            };
+
+            ApplyBase(media, req.ReleaseDate, req.MediaImageUrl);
+
+            media.AnimeDetails = new AnimeDetails
+            {
+                Studio = req.Studio,
+                EpisodeCount = req.EpisodeCount,
+                Genres = req.Genres,
+            };
+
+            return media;
+        }
+
+        public static Media CreateManga(CreateMangaRequest req)
+        {
+            var media = new Media
+            {
+                MediaType = MediaType.Manga,
+                Title = req.Title,
+                Description = req.Description,
+            };
+
+            ApplyBase(media, req.ReleaseDate, req.MediaImageUrl);
+
+            media.MangaDetails = new MangaDetails
+            {
+                Publisher = req.Publisher,
+                ChapterCount = req.ChapterCount,
+                VolumeCount = req.VolumeCount,
+                Genres = req.Genres,
+            };
+
+            return media;
+        }
+
+        public static Media CreateMovie(CreateMovieRequest req)
+        {
+            var media = new Media
+            {
+                MediaType = MediaType.Movie,
+                Title = req.Title,
+                Description = req.Description,
+            };
+
+            ApplyBase(media, req.ReleaseDate, req.MediaImageUrl);
+
+            media.MovieDetails = new MovieDetails
+            {
+                Studio = req.Studio,
+                Directors = req.Directors,
+                Genres = req.Genres,
+            };
+
+            return media;
+        }
+    }
+
     public class MediaService(AppDbContext context) : IMediaService
     {
         private const int DefaultPageSize = 25;
@@ -17,23 +98,7 @@ namespace AniBento.Api.Services
 
         public async Task<GetMediaResponse> CreateAnimeAsync(CreateAnimeRequest req)
         {
-            Media media = new Media
-            {
-                MediaType = MediaType.Anime,
-                Title = req.Title,
-                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
-                Description = req.Description,
-                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
-                ReleaseDate = req.ReleaseDate,
-                MediaImageUrl = req.MediaImageUrl,
-                EnteredAt = DateTime.UtcNow,
-                AnimeDetails = new AnimeDetails
-                {
-                    Studio = req.Studio,
-                    EpisodeCount = req.EpisodeCount,
-                    Genres = req.Genres,
-                },
-            };
+            Media media = MediaFactory.CreateAnime(req);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync();
@@ -59,24 +124,7 @@ namespace AniBento.Api.Services
 
         public async Task<GetMediaResponse> CreateMangaAsync(CreateMangaRequest req)
         {
-            Media media = new Media
-            {
-                MediaType = MediaType.Manga,
-                Title = req.Title,
-                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
-                Description = req.Description,
-                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
-                ReleaseDate = req.ReleaseDate,
-                MediaImageUrl = req.MediaImageUrl,
-                EnteredAt = DateTime.UtcNow,
-                MangaDetails = new MangaDetails
-                {
-                    ChapterCount = req.ChapterCount,
-                    Publisher = req.Publisher,
-                    VolumeCount = req.VolumeCount,
-                    Genres = req.Genres,
-                },
-            };
+            Media media = MediaFactory.CreateManga(req);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync();
@@ -103,23 +151,7 @@ namespace AniBento.Api.Services
 
         public async Task<GetMediaResponse> CreateMovieAsync(CreateMovieRequest req)
         {
-            Media media = new Media
-            {
-                MediaType = MediaType.Movie,
-                Title = req.Title,
-                TitleNormalized = req.Title.Trim().ToUpperInvariant(),
-                Description = req.Description,
-                DescriptionNormalized = req.Description.Trim().ToUpperInvariant(),
-                ReleaseDate = req.ReleaseDate,
-                MediaImageUrl = req.MediaImageUrl,
-                EnteredAt = DateTime.UtcNow,
-                MovieDetails = new MovieDetails
-                {
-                    Directors = req.Directors,
-                    Studio = req.Studio,
-                    Genres = req.Genres,
-                },
-            };
+            Media media = MediaFactory.CreateMovie(req);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync();
@@ -232,6 +264,7 @@ namespace AniBento.Api.Services
                     ChapterCount = existingMedia.MangaDetails.ChapterCount,
                     Publisher = existingMedia.MangaDetails.Publisher,
                     VolumeCount = existingMedia.MangaDetails.VolumeCount,
+                    Genres = existingMedia.MangaDetails.Genres,
                 },
             };
         }
