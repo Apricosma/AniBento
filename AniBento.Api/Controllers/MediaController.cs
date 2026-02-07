@@ -1,9 +1,7 @@
 ﻿using AniBento.Api.Dtos.Common;
 using AniBento.Api.Dtos.Media;
-using AniBento.Api.Models;
 using AniBento.Api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -14,7 +12,7 @@ namespace AniBento.Api.Controllers
     public class MediaController(IMediaService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<PagedResponse<GetAllMediaListResponse>>> GetMedia(
+        public async Task<ActionResult<PagedResponse<MediaListItem>>> GetMedia(
             [FromQuery] GetAllMediaQuery query,
             CancellationToken ct
         )
@@ -24,21 +22,19 @@ namespace AniBento.Api.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<GetMediaResponse>> GetMediaById(int id)
+        public async Task<ActionResult<GetMediaResponse>> GetMediaById(int id, CancellationToken ct)
         {
-            GetMediaResponse? media = await service.GetMediaByIdAsync(id);
-            if (media == null)
-            {
+            GetMediaResponse? media = await service.GetMediaByIdAsync(id, ct);
+            if (media is null)
                 return NotFound();
-            }
             return Ok(media);
         }
 
         [Authorize]
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteMediaById(int id)
+        public async Task<IActionResult> DeleteMediaById(int id, CancellationToken ct)
         {
-            await service.DeleteMediaAsync(id);
+            await service.DeleteMediaAsync(id, ct);
             return NoContent();
         }
 
@@ -46,10 +42,11 @@ namespace AniBento.Api.Controllers
         [HttpPost("anime")]
         [SwaggerOperation(Summary = "Create an Anime media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateAnime(
-            [FromBody] CreateAnimeRequest req
+            [FromBody] CreateAnimeRequest req,
+            CancellationToken ct
         )
         {
-            var created = await service.CreateAnimeAsync(req);
+            var created = await service.CreateAnimeAsync(req, ct);
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
@@ -57,10 +54,11 @@ namespace AniBento.Api.Controllers
         [HttpPost("manga")]
         [SwaggerOperation(Summary = "Create a Manga media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateManga(
-            [FromBody] CreateMangaRequest req
+            [FromBody] CreateMangaRequest req,
+            CancellationToken ct
         )
         {
-            var created = await service.CreateMangaAsync(req);
+            var created = await service.CreateMangaAsync(req, ct);
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
@@ -68,10 +66,11 @@ namespace AniBento.Api.Controllers
         [HttpPost("movie")]
         [SwaggerOperation(Summary = "Create a Movie media item.")]
         public async Task<ActionResult<GetMediaResponse>> CreateMovie(
-            [FromBody] CreateMovieRequest req
+            [FromBody] CreateMovieRequest req,
+            CancellationToken ct
         )
         {
-            var created = await service.CreateMovieAsync(req);
+            var created = await service.CreateMovieAsync(req, ct);
             return CreatedAtAction(nameof(GetMediaById), new { id = created.Id }, created);
         }
 
@@ -80,10 +79,11 @@ namespace AniBento.Api.Controllers
         [SwaggerOperation(Summary = "Update an existing Anime media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateAnime(
             int id,
-            [FromBody] UpdateAnimeRequest req
+            [FromBody] UpdateAnimeRequest req,
+            CancellationToken ct
         )
         {
-            var updated = await service.UpdateAnimeAsync(id, req);
+            var updated = await service.UpdateAnimeAsync(id, req, ct);
             if (updated is null)
                 return NotFound();
             return Ok(updated);
@@ -94,10 +94,11 @@ namespace AniBento.Api.Controllers
         [SwaggerOperation(Summary = "Update an existing Manga media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateManga(
             int id,
-            [FromBody] UpdateMangaRequest req
+            [FromBody] UpdateMangaRequest req,
+            CancellationToken ct
         )
         {
-            var updated = await service.UpdateMangaAsync(id, req);
+            var updated = await service.UpdateMangaAsync(id, req, ct);
             if (updated is null)
                 return NotFound();
             return Ok(updated);
@@ -108,10 +109,11 @@ namespace AniBento.Api.Controllers
         [SwaggerOperation(Summary = "Update an existing Movie media item by ID.")]
         public async Task<ActionResult<GetMediaResponse>> UpdateMovie(
             int id,
-            [FromBody] UpdateMovieRequest req
+            [FromBody] UpdateMovieRequest req,
+            CancellationToken ct
         )
         {
-            var updated = await service.UpdateMovieAsync(id, req);
+            var updated = await service.UpdateMovieAsync(id, req, ct);
             if (updated is null)
                 return NotFound();
             return Ok(updated);

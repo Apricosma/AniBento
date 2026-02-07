@@ -34,6 +34,7 @@ namespace AniBento.Api.Models
         public MangaDetails? MangaDetails { get; set; }
         public MovieDetails? MovieDetails { get; set; }
 
+        public ICollection<MediaGenre> MediaGenres { get; set; } = new List<MediaGenre>();
         public ICollection<UserMedia> UserMedias { get; set; } = new List<UserMedia>();
     }
 
@@ -44,7 +45,6 @@ namespace AniBento.Api.Models
 
         public string? Studio { get; set; }
         public int EpisodeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class MangaDetails
@@ -55,7 +55,6 @@ namespace AniBento.Api.Models
         public string? Publisher { get; set; }
         public int ChapterCount { get; set; }
         public int VolumeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class MovieDetails
@@ -64,6 +63,5 @@ namespace AniBento.Api.Models
         public Media Media { get; set; } = default!;
         public string? Studio { get; set; }
         public string[]? Directors { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 }

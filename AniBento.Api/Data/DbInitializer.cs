@@ -20,19 +20,31 @@ namespace AniBento.Api.Data
                 context.SaveChanges();
             }
 
-            // ---- Media + Details ----
+            // ---- Genres ----
+            if (!context.Genres.Any())
+            {
+                context.Genres.AddRange(GenreSeed.CanonicalGenres);
+                context.SaveChanges();
+            }
+
+            // ---- Media (+ Genres + Details) ----
             if (!context.Medias.Any())
             {
-                Media[] medias = DbMediaSeed.Medias;
+                // Load tracked genres from DB so EF links them in the join table
+                var genresByNorm = context.Genres.ToDictionary(g => g.NameNormalized);
 
-                // lazy update to add normalization because I ain't editing a hundred seeds lmao
+                var medias = DbMediaSeed.BuildMedias(genresByNorm);
+
+                // optional safety normalization
                 foreach (var media in medias)
                 {
-                    media.TitleNormalized = media.Title.Trim().ToUpperInvariant();
-                    media.DescriptionNormalized = media.Description.Trim().ToUpperInvariant();
+                    media.Title = media.Title.Trim();
+                    media.Description = media.Description.Trim();
+                    media.TitleNormalized = media.Title.ToUpperInvariant();
+                    media.DescriptionNormalized = media.Description.ToUpperInvariant();
                 }
-                context.Medias.AddRange(medias);
 
+                context.Medias.AddRange(medias);
                 context.SaveChanges();
             }
 
@@ -61,15 +73,11 @@ namespace AniBento.Api.Data
                     EmailConfirmed = true,
                 };
 
-                context.Users.Add(admin);
-                context.Users.Add(user);
-                context.SaveChanges();
-
+                // Hash BEFORE adding so you don't need Update() calls.
                 admin.PasswordHash = passwordHasher.HashPassword(admin, "Admin123!");
                 user.PasswordHash = passwordHasher.HashPassword(user, "User123!");
 
-                context.Users.Update(admin);
-                context.Users.Update(user);
+                context.Users.AddRange(admin, user);
                 context.SaveChanges();
 
                 var adminRole = context.Roles.Single(r => r.Name == "Admin");
@@ -89,15 +97,21 @@ namespace AniBento.Api.Data
                 var adminUser = context.Users.Single(u => u.UserName == "AdminSammy");
                 var testUser = context.Users.Single(u => u.UserName == "TestUser");
 
-                var naruto = context.Medias.Single(m => m.Title == "Naruto");
-                var onePiece = context.Medias.Single(m => m.Title == "One Piece");
+                // Titles are not guaranteed unique across types, so be explicit if you can.
+                var naruto = context.Medias.Single(m =>
+                    m.Title == "Naruto" && m.MediaType == MediaType.Manga
+                );
+
+                var onePiece = context.Medias.Single(m =>
+                    m.Title == "One Piece" && m.MediaType == MediaType.Anime
+                );
 
                 context.UserMedias.AddRange(
                     new UserMedia
                     {
                         UserId = adminUser.Id,
                         MediaId = naruto.Id,
-                        Status = Models.Enums.UserMediaStatus.Reading,
+                        Status = UserMediaStatus.Reading,
                         Rating = 5,
                         AddedAt = DateTimeOffset.UtcNow,
                     },
@@ -105,7 +119,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = adminUser.Id,
                         MediaId = onePiece.Id,
-                        Status = Models.Enums.UserMediaStatus.OnHold,
+                        Status = UserMediaStatus.OnHold,
                         Rating = 4,
                         AddedAt = DateTimeOffset.UtcNow,
                     },
@@ -113,7 +127,7 @@ namespace AniBento.Api.Data
                     {
                         UserId = testUser.Id,
                         MediaId = onePiece.Id,
-                        Status = Models.Enums.UserMediaStatus.Completed,
+                        Status = UserMediaStatus.Completed,
                         Rating = 4,
                         AddedAt = DateTimeOffset.UtcNow,
                     }

@@ -12,6 +12,7 @@ namespace AniBento.Api.Data
             : base(options) { }
 
         public DbSet<Media> Medias => Set<Media>();
+        public DbSet<Genre> Genres => Set<Genre>();
         public DbSet<UserMedia> UserMedias => Set<UserMedia>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -56,10 +57,27 @@ namespace AniBento.Api.Data
                 .HasForeignKey<MovieDetails>(d => d.MediaId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<AnimeDetails>().Property(a => a.Genres).HasColumnType("text[]");
-            modelBuilder.Entity<MangaDetails>().Property(m => m.Genres).HasColumnType("text[]");
-            modelBuilder.Entity<MovieDetails>().Property(m => m.Genres).HasColumnType("text[]");
             modelBuilder.Entity<MovieDetails>().Property(m => m.Directors).HasColumnType("text[]");
+
+            modelBuilder.Entity<Genre>().HasIndex(g => g.NameNormalized).IsUnique();
+
+            modelBuilder.Entity<MediaGenre>(entity =>
+            {
+                entity.HasKey(x => new { x.MediaId, x.GenreId });
+
+                entity
+                    .HasOne(x => x.Media)
+                    .WithMany(m => m.MediaGenres)
+                    .HasForeignKey(x => x.MediaId);
+
+                entity
+                    .HasOne(x => x.Genre)
+                    .WithMany(g => g.MediaGenres)
+                    .HasForeignKey(x => x.GenreId);
+
+                entity.HasIndex(x => x.GenreId);
+                entity.HasIndex(x => x.MediaId);
+            });
 
             modelBuilder.Entity<UserMedia>(entity =>
             {

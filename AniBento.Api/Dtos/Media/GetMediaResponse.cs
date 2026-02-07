@@ -13,6 +13,8 @@ namespace AniBento.Api.Dtos.Media
         public string? MediaImageUrl { get; set; }
         public DateTimeOffset EnteredAt { get; set; }
 
+        public List<GenreDto> Genres { get; set; } = [];
+
         // If a field is null, it will be ignored in the JSON response
         // This is to avoid sending unnecessary data for media types that don't have specific details
         // Front-end needs to handle the absence of these fields appropriately
@@ -30,7 +32,6 @@ namespace AniBento.Api.Dtos.Media
     {
         public string? Studio { get; set; }
         public int EpisodeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class MangaDetailsDto
@@ -38,13 +39,11 @@ namespace AniBento.Api.Dtos.Media
         public string? Publisher { get; set; }
         public int ChapterCount { get; set; }
         public int VolumeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class MovieDetailsDto
     {
         public string? Studio { get; set; }
-        public string[] Genres { get; set; } = [];
         public string[]? Directors { get; set; }
     }
 }

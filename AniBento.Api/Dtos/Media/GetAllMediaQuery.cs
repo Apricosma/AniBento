@@ -7,5 +7,6 @@ namespace AniBento.Api.Dtos.Media
     {
         public MediaType? MediaType { get; init; }
         public string? Search { get; init; }
+        public List<int>? GenreIds { get; init; }
     }
 }

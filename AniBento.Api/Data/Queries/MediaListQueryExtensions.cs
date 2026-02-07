@@ -22,17 +22,24 @@ namespace AniBento.Api.Data.Queries
                 q = q.Where(m => m.MediaType == query.MediaType);
             }
 
+            if (query.GenreIds is { Count: > 0 })
+            {
+                int[] ids = query.GenreIds.Distinct().ToArray();
+
+                q = q.Where(m => m.MediaGenres.Any(mg => ids.Contains(mg.GenreId)));
+            }
+
             if (!string.IsNullOrWhiteSpace(query.Search))
             {
                 string term = query.Search.Trim().ToUpperInvariant();
                 string like = $"%{term}%";
 
                 q = q.Where(m =>
-                    EF.Functions.Like(m.TitleNormalized, like)
-                    || EF.Functions.Like(m.DescriptionNormalized, like)
+                    EF.Functions.Like(m.TitleNormalized!, like)
+                    || EF.Functions.Like(m.DescriptionNormalized!, like)
                 );
 
-                q = q.OrderByDescending(m => EF.Functions.Like(m.TitleNormalized, $"{term}%"))
+                q = q.OrderByDescending(m => EF.Functions.Like(m.TitleNormalized!, $"{term}%"))
                     .ThenBy(m => m.Title)
                     .ThenBy(m => m.Id);
 

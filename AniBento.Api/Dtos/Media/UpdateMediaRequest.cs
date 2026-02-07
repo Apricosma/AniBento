@@ -9,13 +9,13 @@ namespace AniBento.Api.Dtos.Media
         public required string Description { get; set; }
         public DateOnly ReleaseDate { get; set; }
         public string? MediaImageUrl { get; set; }
+        public List<int> GenreIds { get; set; } = [];
     }
 
     public class UpdateAnimeRequest : UpdateMediaBaseRequest
     {
         public string? Studio { get; set; }
         public int EpisodeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class UpdateMangaRequest : UpdateMediaBaseRequest
@@ -23,13 +23,11 @@ namespace AniBento.Api.Dtos.Media
         public string? Publisher { get; set; }
         public int ChapterCount { get; set; }
         public int VolumeCount { get; set; }
-        public string[] Genres { get; set; } = [];
     }
 
     public class UpdateMovieRequest : UpdateMediaBaseRequest
     {
         public string? Studio { get; set; }
-        public string[] Genres { get; set; } = [];
         public string[]? Directors { get; set; }
     }
 }
