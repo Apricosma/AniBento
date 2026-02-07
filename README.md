@@ -46,3 +46,6 @@ Jwt Key, Jwt Audience, and Connection Strings in asp.net user secrets sercrets.j
 
 ## Starting
 With docker desktop: `docker compose up` -> Starts AniBento.Api Server Container + Starts AniBentoDb Postgres Instance Container
+
+## Swagger endpoint
+`http://localhost:5163/swagger`
