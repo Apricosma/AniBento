@@ -4,6 +4,7 @@
 The project is **currently configured for development** and will drop the database on every launch
 
 ### Full Stack Demo Application For Media Management
+- User defined media, I wanted to stay away from calling IMDB or AniDB endpoints to make it as much of my own business logic as possible
 - ASP.NET Core Web Api back end server
 - JWT Authentication Bearer Webtoken
 - Fully dockerized with docker compose
