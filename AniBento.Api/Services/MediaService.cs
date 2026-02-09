@@ -24,12 +24,12 @@ namespace AniBento.Api.Services
             m.EnteredAt = DateTimeOffset.UtcNow;
         }
 
-        private static List<MediaGenre> ToJoins(Media media, IEnumerable<Genre> genres)
+        private static List<MediaGenre> ToJoins(Media media, IEnumerable<int> genreIds)
         {
-            return genres.Select(g => new MediaGenre { Media = media, Genre = g }).ToList();
+            return genreIds.Select(id => new MediaGenre { Media = media, GenreId = id }).ToList();
         }
 
-        public static Media CreateAnime(CreateAnimeRequest req, List<Genre> genres)
+        public static Media CreateAnime(CreateAnimeRequest req, IEnumerable<int> genreIds)
         {
             var media = new Media
             {
@@ -46,12 +46,12 @@ namespace AniBento.Api.Services
                 EpisodeCount = req.EpisodeCount,
             };
 
-            media.MediaGenres = ToJoins(media, genres);
+            media.MediaGenres = ToJoins(media, genreIds);
 
             return media;
         }
 
-        public static Media CreateManga(CreateMangaRequest req, List<Genre> genres)
+        public static Media CreateManga(CreateMangaRequest req, IEnumerable<int> genreIds)
         {
             var media = new Media
             {
@@ -69,12 +69,12 @@ namespace AniBento.Api.Services
                 VolumeCount = req.VolumeCount,
             };
 
-            media.MediaGenres = ToJoins(media, genres);
+            media.MediaGenres = ToJoins(media, genreIds);
 
             return media;
         }
 
-        public static Media CreateMovie(CreateMovieRequest req, List<Genre> genres)
+        public static Media CreateMovie(CreateMovieRequest req, IEnumerable<int> genreIds)
         {
             var media = new Media
             {
@@ -91,7 +91,7 @@ namespace AniBento.Api.Services
                 Directors = req.Directors,
             };
 
-            media.MediaGenres = ToJoins(media, genres);
+            media.MediaGenres = ToJoins(media, genreIds);
 
             return media;
         }
@@ -198,7 +198,6 @@ namespace AniBento.Api.Services
                 MediaImageUrl = m.MediaImageUrl,
                 EnteredAt = m.EnteredAt,
                 MediaType = m.MediaType,
-                GenreIds = m.MediaGenres.Select(mg => mg.GenreId).ToList(),
                 Genres = m
                     .MediaGenres.Select(mg => mg.Genre)
                     .Select(g => new GenreDto { Id = g.Id, Name = g.Name })
@@ -219,8 +218,8 @@ namespace AniBento.Api.Services
             CancellationToken ct
         )
         {
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
-            Media media = MediaFactory.CreateAnime(req, genres);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
+            Media media = MediaFactory.CreateAnime(req, genreIds);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync(ct);
@@ -255,8 +254,8 @@ namespace AniBento.Api.Services
             CancellationToken ct
         )
         {
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
-            Media media = MediaFactory.CreateManga(req, genres);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
+            Media media = MediaFactory.CreateManga(req, genreIds);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync(ct);
@@ -292,8 +291,8 @@ namespace AniBento.Api.Services
             CancellationToken ct
         )
         {
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
-            Media media = MediaFactory.CreateMovie(req, genres);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
+            Media media = MediaFactory.CreateMovie(req, genreIds);
 
             context.Medias.Add(media);
             await context.SaveChangesAsync(ct);
@@ -355,11 +354,11 @@ namespace AniBento.Api.Services
             existingMedia.AnimeDetails.Studio = req.Studio;
             existingMedia.AnimeDetails.EpisodeCount = req.EpisodeCount;
 
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
             existingMedia.MediaGenres.Clear();
-            foreach (var g in genres)
+            foreach (var gid in genreIds)
                 existingMedia.MediaGenres.Add(
-                    new MediaGenre { MediaId = existingMedia.Id, GenreId = g.Id }
+                    new MediaGenre { MediaId = existingMedia.Id, GenreId = gid }
                 );
 
             await context.SaveChangesAsync(ct);
@@ -420,11 +419,11 @@ namespace AniBento.Api.Services
             existingMedia.MangaDetails.ChapterCount = req.ChapterCount;
             existingMedia.MangaDetails.VolumeCount = req.VolumeCount;
 
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
             existingMedia.MediaGenres.Clear();
-            foreach (var g in genres)
+            foreach (var gid in genreIds)
                 existingMedia.MediaGenres.Add(
-                    new MediaGenre { MediaId = existingMedia.Id, GenreId = g.Id }
+                    new MediaGenre { MediaId = existingMedia.Id, GenreId = gid }
                 );
 
             await context.SaveChangesAsync(ct);
@@ -485,11 +484,11 @@ namespace AniBento.Api.Services
             existingMedia.MovieDetails.Studio = req.Studio;
             existingMedia.MovieDetails.Directors = req.Directors;
 
-            var genres = await genreService.RequireByIdsAsync(req.GenreIds, ct);
+            var genreIds = await genreService.RequireIdsAsync(req.GenreIds, ct);
             existingMedia.MediaGenres.Clear();
-            foreach (var g in genres)
+            foreach (var gid in genreIds)
                 existingMedia.MediaGenres.Add(
-                    new MediaGenre { MediaId = existingMedia.Id, GenreId = g.Id }
+                    new MediaGenre { MediaId = existingMedia.Id, GenreId = gid }
                 );
 
             await context.SaveChangesAsync(ct);

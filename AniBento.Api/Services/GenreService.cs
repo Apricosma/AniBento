@@ -8,7 +8,17 @@ namespace AniBento.Api.Services
     public interface IGenreService
     {
         Task<List<GenreDto>> GetAllAsync(CancellationToken ct);
-        Task<List<Genre>> RequireByIdsAsync(List<int>? ids, CancellationToken ct);
+        Task<List<string>> RequireNamesByIdsAsync(List<int>? ids, CancellationToken ct);
+        Task<int[]> RequireIdsAsync(List<int>? ids, CancellationToken ct);
+    }
+
+    public sealed class ValidationException : Exception
+    {
+        public ValidationException(string message)
+            : base(message) { }
+
+        public ValidationException(string message, Exception innerException)
+            : base(message, innerException) { }
     }
 
     public sealed class GenreService(AppDbContext context) : IGenreService
@@ -20,19 +30,34 @@ namespace AniBento.Api.Services
                 .Select(g => new GenreDto { Id = g.Id, Name = g.Name })
                 .ToListAsync(ct);
 
-        public async Task<List<Genre>> RequireByIdsAsync(List<int>? ids, CancellationToken ct)
+        public async Task<int[]> RequireIdsAsync(List<int>? ids, CancellationToken ct)
         {
-            ids ??= [];
-            var distinct = ids.Distinct().ToArray();
-            if (distinct.Length == 0)
-                return [];
+            if (ids is null || ids.Count == 0)
+                throw new ValidationException("At least one genre ID must be provided.");
 
-            var genres = await context.Genres.Where(g => distinct.Contains(g.Id)).ToListAsync(ct);
+            var distinctIds = ids.Distinct().ToArray();
 
-            if (genres.Count != distinct.Length)
-                throw new ArgumentException("One or more GenreIds are invalid.");
+            var foundCount = await context
+                .Genres.AsNoTracking()
+                .Where(g => distinctIds.Contains(g.Id))
+                .Select(g => g.Id)
+                .Distinct()
+                .CountAsync(ct);
 
-            return genres;
+            if (foundCount != distinctIds.Length)
+                throw new ValidationException("One or more genre IDs are invalid.");
+            return distinctIds;
+        }
+
+        public async Task<List<string>> RequireNamesByIdsAsync(List<int>? ids, CancellationToken ct)
+        {
+            var distinctIds = await RequireIdsAsync(ids, ct);
+
+            return await context
+                .Genres.AsNoTracking()
+                .Where(g => distinctIds.Contains(g.Id))
+                .Select(g => g.Name)
+                .ToListAsync(ct);
         }
     }
 }
