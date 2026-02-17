@@ -5,7 +5,7 @@
     /// </summary>
     public class PublicUserInfoResponse
     {
-        public required string Username { get; set; }
+        public required string UserName { get; set; }
         public string? ProfilePictureUrl { get; set; }
     }
 }

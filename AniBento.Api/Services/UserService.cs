@@ -13,16 +13,16 @@ namespace AniBento.Api.Services
             GetPublicUserInfoRequest request
         )
         {
-            if (string.IsNullOrWhiteSpace(request.Username))
+            if (string.IsNullOrWhiteSpace(request.UserName))
                 return null;
 
-            string normalizedUsername = request.Username.ToUpperInvariant();
+            string normalizedUsername = request.UserName.ToUpperInvariant();
 
             return await context
                 .Users.Where(u => u.NormalizedUserName == normalizedUsername)
                 .Select(u => new PublicUserInfoResponse
                 {
-                    Username = u.UserName,
+                    UserName = u.UserName,
                     ProfilePictureUrl = u.ProfilePictureUrl,
                 })
                 .FirstOrDefaultAsync();
