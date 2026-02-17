@@ -41,7 +41,6 @@ namespace AniBento.Api.Services
                 .Genres.AsNoTracking()
                 .Where(g => distinctIds.Contains(g.Id))
                 .Select(g => g.Id)
-                .Distinct()
                 .CountAsync(ct);
 
             if (foundCount != distinctIds.Length)
