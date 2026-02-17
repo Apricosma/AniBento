@@ -1,8 +1,6 @@
 ﻿using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using AniBento.Api.Dtos.Auth;
 using AniBento.Api.Models.Auth;
-using AniBento.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +11,7 @@ namespace AniBento.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        ITokenService tokenService
+        SignInManager<ApplicationUser> signInManager
     ) : ControllerBase
     {
         [HttpPost("register")]
@@ -29,12 +26,15 @@ namespace AniBento.Api.Controllers
                 return BadRequest(result.Errors);
             }
 
-            await userManager.AddToRoleAsync(user, "User");
+            var roleResult = await userManager.AddToRoleAsync(user, "User");
+            if (!roleResult.Succeeded)
+            {
+                return BadRequest(roleResult.Errors);
+            }
 
-            var roles = await userManager.GetRolesAsync(user);
-            var token = tokenService.CreateToken(user, roles);
+            await signInManager.SignInAsync(user, isPersistent: false);
 
-            return Ok(token);
+            return Ok();
         }
 
         [HttpPost("login")]
@@ -46,9 +46,10 @@ namespace AniBento.Api.Controllers
                 return Unauthorized("Invalid email or password.");
             }
 
-            var result = await signInManager.CheckPasswordSignInAsync(
+            var result = await signInManager.PasswordSignInAsync(
                 user,
                 request.Password,
+                request.RememberMe,
                 false
             );
             if (!result.Succeeded)
@@ -56,10 +57,14 @@ namespace AniBento.Api.Controllers
                 return Unauthorized("Invalid email or password.");
             }
 
-            var roles = await userManager.GetRolesAsync(user);
-            var token = tokenService.CreateToken(user, roles);
+            return Ok();
+        }
 
-            return Ok(token);
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return Ok();
         }
 
         [HttpPost("check-admin")]

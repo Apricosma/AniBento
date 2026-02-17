@@ -3,12 +3,8 @@ using System.Text.Json.Serialization;
 using AniBento.Api.Data;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,21 +47,20 @@ builder.Services.AddSwaggerGen(c =>
 
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AniBento API", Version = "v1" });
 
-    var jwtSecurityScheme = new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "Enter 'Bearer {your JWT token}'",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" },
-    };
-
-    c.AddSecurityDefinition("Bearer", jwtSecurityScheme);
-
-    c.AddSecurityRequirement(
-        new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } }
+    c.AddSecurityDefinition(
+        "cookieAuth",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.ApiKey,
+            In = ParameterLocation.Cookie,
+            Name = "anibento_auth",
+            Description =
+                "Authentication is managed via the HttpOnly 'anibento_auth' cookie. " +
+                "Swagger UI cannot set or read this cookie via the 'Authorize' dialog. " +
+                "To authenticate, first call the login endpoint so the browser receives the " +
+                "Set-Cookie response; subsequent requests from Swagger UI will then include " +
+                "the cookie automatically."
+        }
     );
 });
 
@@ -78,47 +73,47 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ASP.NET Core Identity
 builder
-    .Services.AddIdentityCore<ApplicationUser>(options =>
+    .Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 6;
         options.Password.RequireDigit = false;
         options.Password.RequireUppercase = false;
         options.Password.RequireNonAlphanumeric = false;
     })
-    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddSignInManager();
+    .AddDefaultTokenProviders();
 
-// JWT Authentication
-var jwtSection = configuration.GetSection("Jwt");
-var key = Encoding.UTF8.GetBytes(jwtSection["Key"]!);
+// Cookie authentication for session management
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = "anibento_auth";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = env.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest
+        : CookieSecurePolicy.Always;
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromDays(14);
 
-builder
-    .Services.AddAuthentication(options =>
+    // Overwrite asp.net default login redirects to status codes for API consumers
+    options.Events.OnRedirectToLogin = context =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSection["Issuer"],
-            ValidAudience = jwtSection["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-        };
-    });
+        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddAuthorization();
 
 // Application services
 builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IUserMediaService, UserMediaService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 
