@@ -12,7 +12,7 @@ namespace AniBento.Api.Controllers
         public async Task<IActionResult> GetPublicUserInfo(string username)
         {
             var result = await userService.GetPublicUserInfoByUsernameAsync(
-                new GetPublicUserInfoRequest { Username = username }
+                new GetPublicUserInfoRequest { UserName = username }
             );
 
             if (result == null)

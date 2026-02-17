@@ -11,7 +11,6 @@ namespace AniBento.Api.Dtos.Media
         public string? MediaImageUrl { get; init; }
         public DateTimeOffset EnteredAt { get; init; }
 
-        public List<int> GenreIds { get; init; } = [];
         public List<GenreDto> Genres { get; init; } = [];
     }
 }

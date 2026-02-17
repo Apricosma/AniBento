@@ -4,7 +4,7 @@ namespace AniBento.Api.Services
 {
     public interface IUserService
     {
-        Task<PublicUserInfoResponse> GetPublicUserInfoByUsernameAsync(
+        Task<PublicUserInfoResponse?> GetPublicUserInfoByUsernameAsync(
             GetPublicUserInfoRequest request
         );
     }
