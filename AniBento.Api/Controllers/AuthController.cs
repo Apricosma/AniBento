@@ -32,7 +32,7 @@ namespace AniBento.Api.Controllers
                 return BadRequest(roleResult.Errors);
             }
 
-            await signInManager.SignInAsync(user, isPersistent: true);
+            await signInManager.SignInAsync(user, isPersistent: false);
 
             return Ok();
         }
