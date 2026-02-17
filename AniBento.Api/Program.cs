@@ -54,6 +54,12 @@ builder.Services.AddSwaggerGen(c =>
             Type = SecuritySchemeType.ApiKey,
             In = ParameterLocation.Cookie,
             Name = "anibento_auth",
+            Description =
+                "Authentication is managed via the HttpOnly 'anibento_auth' cookie. " +
+                "Swagger UI cannot set or read this cookie via the 'Authorize' dialog. " +
+                "To authenticate, first call the login endpoint so the browser receives the " +
+                "Set-Cookie response; subsequent requests from Swagger UI will then include " +
+                "the cookie automatically."
         }
     );
 });
