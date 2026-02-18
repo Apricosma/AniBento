@@ -1,6 +1,11 @@
 ﻿namespace AniBento.Api.Dtos.Collection
 {
-    public class CollectionResponse
+    public class CollectionSummaryResponse
     {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+        public bool IsPrivate { get; set; }
+        public int ItemCount { get; set; }
     }
 }
