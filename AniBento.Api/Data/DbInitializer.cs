@@ -135,6 +135,107 @@ namespace AniBento.Api.Data
 
                 context.SaveChanges();
             }
+
+            // ---- Collections ----
+            if (!context.Collections.Any())
+            {
+                var adminUser = context.Users.Single(u => u.UserName == "AdminSammy");
+                var testUser = context.Users.Single(u => u.UserName == "TestUser");
+
+                int GetUserMediaIdOrThrow(string userId, string title, MediaType type)
+                {
+                    var id = context
+                        .UserMedias.Where(um =>
+                            um.UserId == userId
+                            && um.Media.Title == title
+                            && um.Media.MediaType == type
+                        )
+                        .Select(um => um.Id)
+                        .SingleOrDefault();
+
+                    if (id == 0)
+                        throw new InvalidOperationException(
+                            $"Missing UserMedia for user='{userId}', title='{title}', type='{type}'."
+                        );
+
+                    return id;
+                }
+
+                var adminNarutoMangaId = GetUserMediaIdOrThrow(
+                    adminUser.Id,
+                    "Naruto",
+                    MediaType.Manga
+                );
+                var adminOnePieceAnimeId = GetUserMediaIdOrThrow(
+                    adminUser.Id,
+                    "One Piece",
+                    MediaType.Anime
+                );
+
+                var testOnePieceAnimeId = GetUserMediaIdOrThrow(
+                    testUser.Id,
+                    "One Piece",
+                    MediaType.Anime
+                );
+
+                context.Collections.AddRange(
+                    new MediaCollection
+                    {
+                        UserId = adminUser.Id,
+                        Name = "Favorites",
+                        Description = "Stuff I actually love.",
+                        IsPrivate = false,
+                        CollectionItems = new List<CollectionItem>
+                        {
+                            new() { UserMediaId = adminNarutoMangaId, Note = "Classic." },
+                            new()
+                            {
+                                UserMediaId = adminOnePieceAnimeId,
+                                Note = "Never ends (in a good way).",
+                            },
+                        },
+                    },
+                    new MediaCollection
+                    {
+                        UserId = adminUser.Id,
+                        Name = "On Hold",
+                        Description = "Paused for now.",
+                        IsPrivate = true,
+                        CollectionItems = new List<CollectionItem>
+                        {
+                            new() { UserMediaId = adminOnePieceAnimeId, Note = "Will resume." },
+                        },
+                    },
+                    new MediaCollection
+                    {
+                        UserId = testUser.Id,
+                        Name = "Watchlist",
+                        Description = "Someday list.",
+                        IsPrivate = true,
+                        CollectionItems = new List<CollectionItem>
+                        {
+                            new()
+                            {
+                                UserMediaId = testOnePieceAnimeId,
+                                Note = "Start from ep 1 properly.",
+                            },
+                        },
+                    },
+                    new MediaCollection
+                    {
+                        UserId = testUser.Id,
+                        Name = "Completed",
+                        Description = "Done and dusted.",
+                        IsPrivate = false,
+                        CollectionItems = new List<CollectionItem>
+                        {
+                            new() { UserMediaId = testOnePieceAnimeId, Note = "Worth it." },
+                        },
+                    }
+                );
+
+                context.SaveChanges();
+            }
         }
     }
 }
