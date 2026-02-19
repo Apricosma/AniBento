@@ -7,7 +7,7 @@ namespace AniBento.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GenreController(IGenreService genreService) : ControllerBase
+    public class GenresController(IGenreService genreService) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GenreDto>>> GetGenres(CancellationToken ct)

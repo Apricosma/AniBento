@@ -4,6 +4,9 @@ namespace AniBento.Api.Services
 {
     public interface ICollectionService
     {
+        Task<IReadOnlyCollection<CollectionSummaryResponse>> GetMyCollectionsAsync(
+            CancellationToken ct
+        );
         Task<CollectionSummaryResponse> CreateAsync(
             CreateCollectionRequest request,
             CancellationToken ct
@@ -24,9 +27,30 @@ namespace AniBento.Api.Services
             CancellationToken ct
         );
 
-        Task DeleteCollectionAsync(int collectionId, CancellationToken ct);
+        Task<bool> DeleteCollectionAsync(int collectionId, CancellationToken ct);
 
-        Task AddItemToCollectionAsync(int collectionId, int mediaId, CancellationToken ct);
+        Task<bool> AddItemToCollectionAsync(
+            int collectionId,
+            AddCollectionItemRequest request,
+            CancellationToken ct
+        );
         Task RemoveMediaFromCollectionAsync(int collectionId, int mediaId, CancellationToken ct);
+        Task<IReadOnlyList<CollectionSummaryResponse>> GetCollectionsForUserAsync(
+            string userName,
+            CancellationToken ct
+        );
+
+        Task<CollectionResponse?> GetCollectionForUserByIdAsync(
+            string userName,
+            int collectionId,
+            CancellationToken ct
+        );
+
+        Task<bool> CollectionItemUpdateAsync(
+            int collectionId,
+            int mediaId,
+            UpdateCollectionItemRequest request,
+            CancellationToken ct
+        );
     }
 }

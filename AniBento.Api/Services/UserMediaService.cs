@@ -32,7 +32,9 @@ namespace AniBento.Api.Services
         {
             ApplicationUser user = await GetCurrentUserAsync();
 
-            var entity = await context.UserMedias.FindAsync(user.Id, request.MediaId);
+            var entity = await context.UserMedias.SingleOrDefaultAsync(um =>
+                um.UserId == user.Id && um.MediaId == request.MediaId
+            );
             if (entity != null)
             {
                 entity.Status = request.Status;
@@ -100,7 +102,10 @@ namespace AniBento.Api.Services
         }
 
         // TODO: Make this method work as a list of updates instead of one at a time
-        public async Task UpdateCurrentUserMediaRatingByIdAsync(int mediaId, int rating)
+        public async Task UpdateCurrentUserMediaRatingByIdAsync(
+            int mediaId,
+            UpdateUserMediaRatingRequest rating
+        )
         {
             var httpContext = httpContextAccessor.HttpContext;
             if (httpContext is null)
@@ -115,7 +120,7 @@ namespace AniBento.Api.Services
             if (userMedia is null)
                 throw new KeyNotFoundException("UserMedia entry not found.");
 
-            userMedia.Rating = rating;
+            userMedia.Rating = rating.Rating;
             context.UserMedias.Update(userMedia);
             await context.SaveChangesAsync();
         }

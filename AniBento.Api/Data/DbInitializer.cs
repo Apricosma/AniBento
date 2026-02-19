@@ -106,6 +106,10 @@ namespace AniBento.Api.Data
                     m.Title == "One Piece" && m.MediaType == MediaType.Anime
                 );
 
+                var bleach = context.Medias.Single(m =>
+                    m.Title == "Bleach" && m.MediaType == MediaType.Anime
+                );
+
                 context.UserMedias.AddRange(
                     new UserMedia
                     {
@@ -121,6 +125,14 @@ namespace AniBento.Api.Data
                         MediaId = onePiece.Id,
                         Status = UserMediaStatus.OnHold,
                         Rating = 4,
+                        AddedAt = DateTimeOffset.UtcNow,
+                    },
+                    new UserMedia
+                    {
+                        UserId = adminUser.Id,
+                        MediaId = bleach.Id,
+                        Status = UserMediaStatus.Dropped,
+                        Rating = 2,
                         AddedAt = DateTimeOffset.UtcNow,
                     },
                     new UserMedia

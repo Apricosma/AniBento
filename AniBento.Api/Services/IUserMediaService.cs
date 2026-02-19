@@ -8,6 +8,9 @@ namespace AniBento.Api.Services
         Task<UserMediaResponse> AddMediaToCurrentUserAsync(AddUserMediaRequest request);
         Task RemoveMediaFromCurrentUserAsync(int mediaId);
         Task<List<UserMediaResponse>> GetCurrentUserMediaAsync();
-        Task UpdateCurrentUserMediaRatingByIdAsync(int mediaId, int rating);
+        Task UpdateCurrentUserMediaRatingByIdAsync(
+            int mediaId,
+            UpdateUserMediaRatingRequest request
+        );
     }
 }
