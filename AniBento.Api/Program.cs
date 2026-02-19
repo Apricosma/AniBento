@@ -55,11 +55,11 @@ builder.Services.AddSwaggerGen(c =>
             In = ParameterLocation.Cookie,
             Name = "anibento_auth",
             Description =
-                "Authentication is managed via the HttpOnly 'anibento_auth' cookie. " +
-                "Swagger UI cannot set or read this cookie via the 'Authorize' dialog. " +
-                "To authenticate, first call the login endpoint so the browser receives the " +
-                "Set-Cookie response; subsequent requests from Swagger UI will then include " +
-                "the cookie automatically."
+                "Authentication is managed via the HttpOnly 'anibento_auth' cookie. "
+                + "Swagger UI cannot set or read this cookie via the 'Authorize' dialog. "
+                + "To authenticate, first call the login endpoint so the browser receives the "
+                + "Set-Cookie response; subsequent requests from Swagger UI will then include "
+                + "the cookie automatically.",
         }
     );
 });
@@ -116,6 +116,7 @@ builder.Services.AddScoped<IMediaService, MediaService>();
 builder.Services.AddScoped<IUserMediaService, UserMediaService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<ICollectionService, CollectionService>();
 
 builder.Services.AddHttpContextAccessor();
 

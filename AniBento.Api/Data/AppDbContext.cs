@@ -14,6 +14,8 @@ namespace AniBento.Api.Data
         public DbSet<Media> Medias => Set<Media>();
         public DbSet<Genre> Genres => Set<Genre>();
         public DbSet<UserMedia> UserMedias => Set<UserMedia>();
+        public DbSet<MediaCollection> Collections => Set<MediaCollection>();
+        public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -81,18 +83,59 @@ namespace AniBento.Api.Data
 
             modelBuilder.Entity<UserMedia>(entity =>
             {
-                entity.HasKey(um => new { um.UserId, um.MediaId });
+                entity.HasKey(um => um.Id);
 
-                entity.HasOne(um => um.User).WithMany().HasForeignKey(um => um.UserId);
+                entity.HasIndex(um => um.UserId);
+                entity.HasIndex(um => new { um.UserId, um.MediaId }).IsUnique();
+
+                entity
+                    .HasOne(um => um.User)
+                    .WithMany(u => u.UserMedias)
+                    .HasForeignKey(um => um.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity
                     .HasOne(um => um.Media)
                     .WithMany(m => m.UserMedias)
-                    .HasForeignKey(um => um.MediaId);
+                    .HasForeignKey(um => um.MediaId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(um => um.Status).HasConversion<string>();
+            });
 
-                entity.HasIndex(um => um.UserId);
+            modelBuilder.Entity<MediaCollection>(entity =>
+            {
+                entity.HasKey(mc => mc.Id);
+
+                entity.Property(mc => mc.Name).IsRequired();
+
+                entity.HasIndex(mc => mc.UserId);
+
+                entity
+                    .HasOne(mc => mc.User)
+                    .WithMany(u => u.Collections)
+                    .HasForeignKey(mc => mc.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CollectionItem>(entity =>
+            {
+                entity.HasKey(ci => ci.Id);
+
+                entity.HasIndex(ci => ci.CollectionId);
+                entity.HasIndex(ci => ci.UserMediaId);
+                entity.HasIndex(ci => new { ci.CollectionId, ci.UserMediaId }).IsUnique();
+
+                entity
+                    .HasOne(ci => ci.Collection)
+                    .WithMany(c => c.CollectionItems)
+                    .HasForeignKey(ci => ci.CollectionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity
+                    .HasOne(ci => ci.UserMedia)
+                    .WithMany(um => um.CollectionItems)
+                    .HasForeignKey(ci => ci.UserMediaId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

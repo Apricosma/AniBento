@@ -18,6 +18,8 @@ namespace AniBento.Api.Models
 {
     public class UserMedia
     {
+        public int Id { get; set; } = default;
+
         public string UserId { get; set; } = default;
         public ApplicationUser User { get; set; } = default;
 
@@ -27,5 +29,8 @@ namespace AniBento.Api.Models
         public UserMediaStatus Status { get; set; } = UserMediaStatus.Planned;
         public int? Rating { get; set; }
         public DateTimeOffset AddedAt { get; internal set; }
+
+        public ICollection<CollectionItem> CollectionItems { get; set; } =
+            new List<CollectionItem>();
     }
 }
