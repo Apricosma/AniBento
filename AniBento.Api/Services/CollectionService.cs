@@ -327,7 +327,7 @@ namespace AniBento.Api.Services
             await context.SaveChangesAsync(ct);
         }
 
-        public async Task<CollectionSummaryResponse> UpdateCollectionAsync(
+        public async Task<CollectionSummaryResponse?> UpdateCollectionAsync(
             int collectionId,
             UpdateCollectionRequest request,
             CancellationToken ct
@@ -342,9 +342,7 @@ namespace AniBento.Api.Services
 
             if (collection is null)
             {
-                throw new KeyNotFoundException(
-                    "Collection not found or does not belong to the user."
-                );
+                return null;
             }
 
             collection.Name = request.Name;

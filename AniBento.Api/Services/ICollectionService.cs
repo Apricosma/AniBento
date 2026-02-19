@@ -21,7 +21,7 @@ namespace AniBento.Api.Services
             CancellationToken ct
         );
 
-        Task<CollectionSummaryResponse> UpdateCollectionAsync(
+        Task<CollectionSummaryResponse?> UpdateCollectionAsync(
             int collectionId,
             UpdateCollectionRequest request,
             CancellationToken ct
