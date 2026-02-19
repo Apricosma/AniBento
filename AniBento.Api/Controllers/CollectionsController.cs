@@ -35,7 +35,11 @@ namespace AniBento.Api.Controllers
         )
         {
             var created = await collectionService.CreateAsync(request, ct);
-            return Ok(created);
+            return CreatedAtAction(
+                nameof(GetCollectionById),
+                new { collectionID = created.Id },
+                created
+            );
         }
 
         [HttpPut("{collectionId:int}")]
