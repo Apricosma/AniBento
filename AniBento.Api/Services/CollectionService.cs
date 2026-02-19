@@ -334,14 +334,17 @@ namespace AniBento.Api.Services
             var currentUser = await RequireCurrentUserAsync();
             var currentUserId = currentUser.Id;
 
-            var collection = await context
+            var collectionWithCount = await context
                 .Collections.Where(c => c.Id == collectionId && c.UserId == currentUserId)
+                .Select(c => new { Collection = c, ItemCount = c.CollectionItems.Count })
                 .SingleOrDefaultAsync(ct);
 
-            if (collection is null)
+            if (collectionWithCount is null)
             {
                 return null;
             }
+
+            var collection = collectionWithCount.Collection;
 
             collection.Name = request.Name;
             collection.Description = request.Description;
@@ -349,17 +352,13 @@ namespace AniBento.Api.Services
 
             await context.SaveChangesAsync(ct);
 
-            var itemCount = await context.CollectionItems.CountAsync(
-                ci => ci.CollectionId == collectionId,
-                ct
-            );
             return new CollectionSummaryResponse
             {
                 Id = collection.Id,
                 Name = collection.Name,
                 Description = collection.Description,
                 IsPrivate = collection.IsPrivate,
-                ItemCount = itemCount,
+                ItemCount = collectionWithCount.ItemCount,
             };
         }
 
