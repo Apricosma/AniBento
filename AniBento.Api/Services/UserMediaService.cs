@@ -107,10 +107,7 @@ namespace AniBento.Api.Services
             UpdateUserMediaRatingRequest rating
         )
         {
-            var httpContext = httpContextAccessor.HttpContext;
-            if (httpContext is null)
-                throw new UnauthorizedAccessException("HTTP context is not available.");
-            ApplicationUser? user = userManager.GetUserAsync(httpContext.User).Result;
+            ApplicationUser? user = await GetCurrentUserAsync();
             if (user is null)
                 throw new UnauthorizedAccessException("User not authenticated.");
 
