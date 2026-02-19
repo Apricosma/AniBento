@@ -34,7 +34,11 @@ namespace AniBento.Api.Services
             AddCollectionItemRequest request,
             CancellationToken ct
         );
-        Task RemoveMediaFromCollectionAsync(int collectionId, int mediaId, CancellationToken ct);
+        Task RemoveMediaFromCollectionAsync(
+            int collectionId,
+            int collectionItemId,
+            CancellationToken ct
+        );
         Task<IReadOnlyList<CollectionSummaryResponse>> GetCollectionsForUserAsync(
             string userName,
             CancellationToken ct
@@ -48,7 +52,7 @@ namespace AniBento.Api.Services
 
         Task<bool> CollectionItemUpdateAsync(
             int collectionId,
-            int mediaId,
+            int collectionItemId,
             UpdateCollectionItemRequest request,
             CancellationToken ct
         );
