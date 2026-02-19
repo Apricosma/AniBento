@@ -2,10 +2,8 @@
 using AniBento.Api.Dtos.Collection;
 using AniBento.Api.Models;
 using AniBento.Api.Models.Auth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace AniBento.Api.Services
 {
