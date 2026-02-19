@@ -384,7 +384,7 @@ namespace AniBento.Api.Services
                 .CollectionItems.Include(ci => ci.UserMedia)
                 .Where(ci =>
                     ci.Id == collectionItemId
-                    && ci.UserMedia.MediaId == collectionId
+                    && ci.CollectionId == collectionId
                     && ci.UserMedia.UserId == currentUserId
                 )
                 .FirstOrDefaultAsync(ct);
