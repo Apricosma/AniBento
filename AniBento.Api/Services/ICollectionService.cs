@@ -39,7 +39,7 @@ namespace AniBento.Api.Services
             int collectionItemId,
             CancellationToken ct
         );
-        Task<IReadOnlyList<CollectionSummaryResponse>> GetCollectionsForUserAsync(
+        Task<IReadOnlyList<CollectionSummaryResponse?>> GetCollectionsForUserAsync(
             string userName,
             CancellationToken ct
         );

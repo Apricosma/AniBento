@@ -101,7 +101,7 @@ namespace AniBento.Api.Services
                 .FirstOrDefaultAsync(ct);
         }
 
-        public async Task<IReadOnlyList<CollectionSummaryResponse>> GetCollectionsForUserAsync(
+        public async Task<IReadOnlyList<CollectionSummaryResponse>?> GetCollectionsForUserAsync(
             string userName,
             CancellationToken ct
         )
@@ -113,7 +113,7 @@ namespace AniBento.Api.Services
                 .SingleOrDefaultAsync(ct);
 
             if (targetUserId is null)
-                return [];
+                return null;
 
             var currentUser = await TryGetCurrentUserAsync();
             var includePrivate = currentUser is not null && currentUser.Id == targetUserId;
