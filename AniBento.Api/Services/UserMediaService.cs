@@ -91,9 +91,11 @@ namespace AniBento.Api.Services
 
         public async Task RemoveMediaFromCurrentUserAsync(int mediaId)
         {
+            var user = await GetCurrentUserAsync();
+            var userId = user.Id;
             UserMedia? userMedia = await context
-                .UserMedias.Where(um => um.MediaId == mediaId)
-                .FirstOrDefaultAsync();
+                .UserMedias.Where(um => um.MediaId == mediaId && um.UserId == user.Id)
+                .SingleOrDefaultAsync();
             if (userMedia is null)
                 return;
 
