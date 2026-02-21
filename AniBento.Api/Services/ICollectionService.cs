@@ -1,4 +1,5 @@
 ﻿using AniBento.Api.Dtos.Collection;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AniBento.Api.Services
 {
@@ -56,5 +57,7 @@ namespace AniBento.Api.Services
             UpdateCollectionItemRequest request,
             CancellationToken ct
         );
+
+        Task<bool> TogglePinnedAsync(int collectionId, CancellationToken ct);
     }
 }

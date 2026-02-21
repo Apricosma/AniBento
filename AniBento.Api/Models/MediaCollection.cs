@@ -15,6 +15,8 @@ namespace AniBento.Api.Models
 
         public bool IsPrivate { get; set; }
 
+        public bool IsPinned { get; set; } = false;
+
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         public ICollection<CollectionItem> CollectionItems { get; set; } =
