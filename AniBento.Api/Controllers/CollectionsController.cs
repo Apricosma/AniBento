@@ -1,4 +1,5 @@
-﻿using AniBento.Api.Dtos.Collection;
+﻿using System.Net;
+using AniBento.Api.Dtos.Collection;
 using AniBento.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -111,6 +112,15 @@ namespace AniBento.Api.Controllers
                 ct
             );
             if (!updated)
+                return NotFound();
+            return NoContent();
+        }
+
+        [HttpPatch("{collectionId:int}/pin")]
+        public async Task<IActionResult> PinCollection(int collectionId, CancellationToken ct)
+        {
+            var ok = await collectionService.TogglePinnedAsync(collectionId, ct);
+            if (!ok)
                 return NotFound();
             return NoContent();
         }

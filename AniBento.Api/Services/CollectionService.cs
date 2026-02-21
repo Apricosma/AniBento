@@ -1,8 +1,10 @@
-﻿using AniBento.Api.Data;
+﻿using System.Runtime.CompilerServices;
+using AniBento.Api.Data;
 using AniBento.Api.Dtos.Collection;
 using AniBento.Api.Models;
 using AniBento.Api.Models.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AniBento.Api.Services
@@ -394,6 +396,26 @@ namespace AniBento.Api.Services
             collectionItem.Note = request.Note;
 
             await context.SaveChangesAsync(ct);
+            return true;
+        }
+
+        public async Task<bool> TogglePinnedAsync(int collectionId, CancellationToken ct)
+        {
+            var currentUser = await RequireCurrentUserAsync();
+            var userId = currentUser.Id;
+
+            var collection = await context.Collections.SingleOrDefaultAsync(
+                c => c.Id == collectionId && c.UserId == userId,
+                ct
+            );
+
+            if (collection is null)
+                return false;
+
+            collection.IsPinned = !collection.IsPinned;
+
+            await context.SaveChangesAsync(ct);
+
             return true;
         }
     }
