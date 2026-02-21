@@ -48,6 +48,7 @@ namespace AniBento.Api.Services
                     Description = c.Description,
                     IsPrivate = c.IsPrivate,
                     ItemCount = c.CollectionItems.Count,
+                    IsPinned = c.IsPinned,
                 })
                 .ToListAsync(ct);
         }
@@ -68,6 +69,7 @@ namespace AniBento.Api.Services
                     Description = c.Description,
                     IsPrivate = c.IsPrivate,
                     ItemCount = c.CollectionItems.Count,
+                    IsPinned = c.IsPinned,
                 })
                 .FirstOrDefaultAsync(ct);
         }
@@ -132,6 +134,7 @@ namespace AniBento.Api.Services
                     Description = c.Description,
                     IsPrivate = c.IsPrivate,
                     ItemCount = c.CollectionItems.Count,
+                    IsPinned = c.IsPinned,
                 })
                 .ToListAsync(ct);
         }
@@ -260,6 +263,7 @@ namespace AniBento.Api.Services
                 Description = newCollection.Description,
                 IsPrivate = newCollection.IsPrivate,
                 ItemCount = 0,
+                IsPinned = newCollection.IsPinned,
             };
         }
 
@@ -361,6 +365,7 @@ namespace AniBento.Api.Services
                 Description = collection.Description,
                 IsPrivate = collection.IsPrivate,
                 ItemCount = collectionWithCount.ItemCount,
+                IsPinned = collection.IsPinned,
             };
         }
 
