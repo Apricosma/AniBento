@@ -11,7 +11,7 @@ namespace AniBento.Api.Models
 
         public string Name { get; set; } = default!;
 
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         public bool IsPrivate { get; set; }
 
