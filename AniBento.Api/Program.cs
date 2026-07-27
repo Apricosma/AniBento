@@ -10,6 +10,10 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+
+Console.WriteLine($"Connection: {builder.Configuration.GetConnectionString("DefaultConnection")}");
+
 var env = builder.Environment;
 var configuration = builder.Configuration;
 var allowedOrigins = "_frontend";
