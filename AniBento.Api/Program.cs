@@ -151,6 +151,21 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 var app = builder.Build();
 app.UseForwardedHeaders();
 
+app.Use(
+    async (context, next) =>
+    {
+        context.Response.Headers.Append("X-Frame-Options", "DENY");
+
+        context.Response.Headers.Append(
+            "Permissions-Policy",
+            "camera=(), microphone=(), geolocation=()"
+        );
+        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+
+        await next();
+    }
+);
+
 // Initialize and seed database in dev
 // Going to be seeding prod while testing, update here to change that later
 using (var scope = app.Services.CreateScope())
@@ -188,6 +203,11 @@ app.UseCors(allowedOrigins);
 //{
 //    app.UseHttpsRedirection();
 //}
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 
 app.Logger.LogInformation("Starting AniBento in {Environment}", app.Environment.EnvironmentName);
 
