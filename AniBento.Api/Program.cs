@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using AniBento.Api.Data;
 using AniBento.Api.Models.Auth;
 using AniBento.Api.Services;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -14,22 +15,40 @@ var configuration = builder.Configuration;
 var allowedOrigins = "_frontend";
 
 // CORS configuration
-builder.Services.AddCors(options =>
+if (env.IsDevelopment())
 {
-    options.AddPolicy(
-        name: allowedOrigins,
-        policy =>
-        {
-            policy
-                .WithOrigins("http://localhost:5175", "http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
-    );
-});
-
-Console.WriteLine($"Launching for ENVIRONMENT: {env.EnvironmentName}");
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(
+            name: allowedOrigins,
+            policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:5175", "http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
+        );
+    });
+}
+else
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(
+            allowedOrigins,
+            policy =>
+            {
+                policy
+                    .WithOrigins("https://anibento.app", "https://www.anibento.app")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }
+        );
+    });
+}
 
 builder
     .Services.AddControllers()
@@ -120,9 +139,16 @@ builder.Services.AddScoped<ICollectionService, CollectionService>();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 // Initialize and seed database in dev
+// Going to be seeding prod while testing, update here to change that later
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -130,6 +156,14 @@ using (var scope = app.Services.CreateScope())
     if (app.Environment.IsDevelopment())
     {
         // !!! DROP DATABASE !!!
+        db.Database.EnsureDeleted();
+        db.Database.Migrate();
+        DbInitializer.Seed(db);
+    }
+
+    // if production
+    if (!app.Environment.IsDevelopment())
+    {
         db.Database.EnsureDeleted();
         db.Database.Migrate();
         DbInitializer.Seed(db);
@@ -149,6 +183,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
+
+app.Logger.LogInformation("Starting AniBento in {Environment}", app.Environment.EnvironmentName);
 
 app.UseAuthentication();
 app.UseAuthorization();
