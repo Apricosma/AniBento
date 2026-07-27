@@ -183,10 +183,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(allowedOrigins);
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+//traefik handles https redirection
+//if (!app.Environment.IsDevelopment())
+//{
+//    app.UseHttpsRedirection();
+//}
 
 app.Logger.LogInformation("Starting AniBento in {Environment}", app.Environment.EnvironmentName);
 
