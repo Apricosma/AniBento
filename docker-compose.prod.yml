@@ -8,9 +8,8 @@ services:
 
     restart: unless-stopped
 
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: http://+:8080
+    env_file:
+        - path: .env
 
     expose:
       - "8080"
