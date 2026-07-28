@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: AniBento.Api/Dockerfile
+
+    restart: unless-stopped
+
+    env_file:
+        - path: .env
+
+    expose:
+      - "8080"
