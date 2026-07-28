@@ -1,0 +1,31 @@
+name: Open Production PR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create PR if one doesn't exist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list \
+            --base production \
+            --head main \
+            --state open \
+            --json number \
+            --jq 'length' | grep -q '^0$' && \
+          gh pr create \
+            --base production \
+            --head main \
+            --title "Release: main → production" \
+            --body "Automatically created from main."
