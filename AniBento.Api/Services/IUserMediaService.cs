@@ -12,5 +12,9 @@ namespace AniBento.Api.Services
             int mediaId,
             UpdateUserMediaRatingRequest request
         );
+        Task UpdateCurrentUserMediaReviewByIdAsync(
+            int userMediaId,
+            UpdateUserMediaReviewRequest request
+        );
     }
 }
