@@ -28,6 +28,7 @@ namespace AniBento.Api.Models
 
         public UserMediaStatus Status { get; set; } = UserMediaStatus.Planned;
         public int? Rating { get; set; }
+        public string? Review { get; set; }
         public DateTimeOffset AddedAt { get; internal set; }
 
         public ICollection<CollectionItem> CollectionItems { get; set; } =

@@ -7,5 +7,6 @@ namespace AniBento.Api.Dtos.UserMedia
         public int MediaId { get; set; }
         public UserMediaStatus Status { get; set; }
         public int? Rating { get; set; }
+        public string? Review { get; set; }
     }
 }
