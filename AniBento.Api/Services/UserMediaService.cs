@@ -52,6 +52,7 @@ namespace AniBento.Api.Services
                     MediaId = request.MediaId,
                     Rating = request.Rating,
                     Status = request.Status,
+                    Review = request.Review,
                     AddedAt = DateTime.UtcNow,
                 };
 
@@ -68,6 +69,7 @@ namespace AniBento.Api.Services
                 Title = media?.Title ?? string.Empty,
                 Status = entity.Status,
                 Rating = entity.Rating,
+                Review = entity.Review,
                 AddedAt = entity.AddedAt,
             };
         }
@@ -84,6 +86,7 @@ namespace AniBento.Api.Services
                     Title = um.Media.Title,
                     Status = um.Status,
                     Rating = um.Rating,
+                    Review = um.Review,
                     AddedAt = um.AddedAt,
                 })
                 .ToListAsync();
@@ -121,6 +124,25 @@ namespace AniBento.Api.Services
 
             userMedia.Rating = rating.Rating;
             context.UserMedias.Update(userMedia);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCurrentUserMediaReviewByIdAsync(
+            int userMediaId,
+            UpdateUserMediaReviewRequest request
+        )
+        {
+            ApplicationUser? user = await GetCurrentUserAsync();
+            if (user is null)
+                throw new UnauthorizedAccessException("User not authenticated.");
+
+            UserMedia? userMedia = await context.UserMedias.FirstOrDefaultAsync(um =>
+                um.Id == userMediaId && um.UserId == user.Id
+            );
+            if (userMedia is null)
+                throw new KeyNotFoundException("UserMedia entry not found.");
+
+            userMedia.Review = request.Review;
             await context.SaveChangesAsync();
         }
     }

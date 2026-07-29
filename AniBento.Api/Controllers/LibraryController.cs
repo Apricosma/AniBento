@@ -25,6 +25,16 @@ namespace AniBento.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPatch("{userMediaId:int}/review")]
+        public async Task<ActionResult> UpdateUserMediaReview(
+            int userMediaId,
+            [FromBody] UpdateUserMediaReviewRequest request
+        )
+        {
+            await userMediaService.UpdateCurrentUserMediaReviewByIdAsync(userMediaId, request);
+            return NoContent();
+        }
+
         [HttpDelete("{mediaId:int}")]
         public async Task<ActionResult> RemoveMediaFromCurrentUser(int mediaId)
         {
